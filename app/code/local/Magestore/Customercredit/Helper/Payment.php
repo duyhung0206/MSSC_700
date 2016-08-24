@@ -7,7 +7,7 @@ class Magestore_Customercredit_Helper_Payment extends Mage_Payment_Helper_Data
     {
         $res = array();
         foreach ($this->getPaymentMethods($store) as $code => $methodConfig) {
-            if ($quote->getGrandTotal() == 0) {
+            if (isset($quote) && $quote->getGrandTotal() == 0) {
                 if ($code == 'free') {
                     $prefix = parent::XML_PATH_PAYMENT_METHODS . '/' . $code . '/';
                     if (!$model = Mage::getStoreConfig($prefix . 'model', $store)) {
