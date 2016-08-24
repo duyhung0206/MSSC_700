@@ -1,0 +1,48 @@
+<?php 
+	$packages = $this->getMembershipPackages();
+
+	$_total = count($packages);
+	$productId = $this->getRequest()->getParam('product');
+	$product = Mage::getModel('catalog/product')->load($productId);
+	$productPrice = $product->getPrice()
+?>
+<div class="ms-membership">
+<div class="page-title title-buttons form-group">
+    <h1><?php echo $product->getName() .": <span style='color:red'>" .  $this->helper('core')->currency($productPrice). "</span>";?></h1>
+    <a href="#" onclick="window.print(); return false;" class="link-print"><?php echo $this->__('Print This Page') ?></a>
+</div>
+<div class="table-responsive form-group">
+<table class="packages-table table table-bordered table-hover" id="packages-table">
+    <thead>
+        <tr>
+			<th class="first"><?php echo $this->__('Plan') ?></th>
+            <th width="15%"><?php echo $this->__('Regular Price') ?></th>
+            <th width="15%"><?php echo $this->__('Membership Price') ?></th>
+            <th  width="15%"><?php echo $this->__('You Saved') ?></th>
+			 <th  width="15%"><?php echo $this->__('View Plan') ?></th>
+            <th width="15%"><?php echo $this->__('Buy Now') ?></th>
+        </tr>
+    </thead>
+    <tbody>
+		<?php foreach($packages as $package){ ?>
+        <?php $productMembershipPrice = $this->helper('membership')->getMembershipPrice($productId, $package)?>
+		<tr>
+			<td class="first"><?php echo $package->getPackageName() ?></td>
+            <td><?php echo $this->helper('core')->currency($productPrice)?></td>
+            <td><?php echo $this->helper('core')->currency($productMembershipPrice) ?></td>
+            <td><?php echo $this->helper('core')->currency($productPrice - $productMembershipPrice)?></td>
+			<td><span class="action"><a onclick="javascript:setPLocation('<?php echo $this->getPackageUrl($package) ?>', true);window.close();" href="<?php echo $this->getPackageUrl($package); ?>"><?php echo $this->__('View Plan')?></a></span></td>
+			<td><span class="action"><a href="<?php echo Mage::getUrl('membership/index/addToCartUrl', array('productId'=>$package->getProductId())) ?>"><?php echo $this->__('Sign Up Now')?></a></span></td>
+		</tr>
+		<?php }?>
+	</tbody>
+</table>
+</div>
+<script type="text/javascript">
+	decorateTable('packages-table');
+</script>
+
+<div class="buttons-set">
+    <button type="button" title="<?php echo $this->__('Close Window') ?>" class="button" onclick="window.close();"><span><span><?php echo $this->__('Close Window') ?></span></span></button>
+</div>
+</div>

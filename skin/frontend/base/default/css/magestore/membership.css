@@ -1,0 +1,189 @@
+.form-group.page-title h1{margin: 0;}
+.packages{
+    float: left;
+    width: 100%;
+    margin: 20px 0 0;
+}
+.packages .package{
+    background: #fff;
+    min-height: 260px;
+    float: left;
+    width: 100%;
+    margin-bottom: 20px;
+    color:#535A64;
+    border: 1px solid #ddd;
+    font-size: 13px;
+    padding-bottom: 20px;
+    border-radius: 4px;
+    transition: all 350ms ease-out;
+    -webkit-transition: all 350ms ease-out;
+    -moz-transition: all 350ms ease-out;
+    -ms-transition:all 350ms ease-out;
+    -o-transition: all 350ms ease-out;
+}
+.package .package-name {
+    font-weight: 500;
+    padding: 20px 0 ;
+    text-align: center;
+    font-size: 17px;
+    text-transform: uppercase;
+    color: #FFFFFF;
+    background: #94C651;
+    margin-bottom: 15px;
+}
+.package .package-price{
+    float: left;
+    width: 100%;
+}
+.package .package-price .price{
+    font-size: 14px;
+    font-weight: 600;
+}
+.package p{
+    float:left;
+    width: 100%;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    text-align: left;
+    padding-left: 10%;
+}
+.package .package-detail{
+    padding: 0 8%;
+    font-size: 13px;
+    float: left;
+    width: 100%;
+    height: 70px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+.package .action{
+    padding-left: 5px;
+    padding-right: 5px;
+}
+.package .action a{
+    float:left;
+    width: 100%;
+    color: #fff;
+    background: #94B713;
+    font-size: 13px;
+    padding: 5px;
+    text-decoration: none;
+    border-radius: 3px;
+}
+.package .expire{
+    font-size: 11px;
+    font-style: italic;
+    font-weight: 600;
+    margin-top: 10px;
+}
+.packages div.package:hover{
+    border-color:#51BCAA;
+}
+.packages div.package:hover .package-name{
+    background:#51BCAA ;
+}
+.packages div.package:hover .action a{
+    background:#51BCAA ;
+}
+.membership-steps ol li.first {
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-topleft: 5px;
+}
+
+.membership-steps ol li.step1, .membership-steps ol li.step2 {
+    border-right: 0 none;
+}
+
+
+.membership-steps ol li {
+    background: none repeat scroll 0 0 #F2F2F2;
+    border: 1px solid #ddd;
+    color: #535A64;
+    display: block;
+    float: left;
+    font-size: 12px;
+    font-weight: bold;
+    margin-left: 0 !important;
+    padding: 5px 45px 5px 10px;
+}
+.ms-membership .packages-table tr{cursor: pointer;}
+
+
+.membership-steps ol li span.number {
+    -moz-border-radius: 5px 5px 5px 5px;
+    background: none repeat scroll 0 0 #94C651;
+    color: #FFFFFF;
+    margin-right: 5px;
+    padding: 0 7px;
+}
+.membership-steps ol li span {
+    display: block;
+    float: left;
+    line-height: 24px;
+}
+@media (max-width: 768px){
+    .membership-steps ol li{border: 0;}
+}
+.ms-membership .packages-table thead tr th{
+    color: #fff;
+    background: #94C651;
+    font-weight: 600;
+}
+.ms-membership .packages-table .action{
+    float: left;
+    width: 100%;
+    text-align: center;
+}
+.ms-membership .packages-table .action a{
+    color: #fff;
+    background: #94B713;
+    font-size: 13px;
+    padding: 5px;
+    text-decoration: none;
+    border-radius: 3px;
+}
+.ms-membership .packages-table  tbody  tr:hover .action a{
+    background: #51BCAA;
+}
+.ms-membership .page-title{
+    border-bottom: 1px solid #ededed;
+}
+.ms-membership .page-title h1{
+    border-bottom:0;
+    margin: 0;
+}
+.ms-membership .page-title .text-right a{
+    float:right;
+    font-size: 13px;
+    color: #ffffff;
+    background: #94C651;
+    text-decoration: none;
+    padding:5px;
+}
+.planinfo
+{
+	margin-left: 0;
+	padding-left: 0;
+	list-style: none;
+	line-height:25px;
+}
+
+.planinfo li.yes
+{
+	padding-left: 25px;
+	background-image: url(images/yes-check.gif);
+	background-repeat: no-repeat;
+	background-position: 0 .5em;
+	text-align:left;
+	vertical-align:middle;
+}
+
+.planinfo li.no
+{
+	padding-left: 25px;
+	background-image: url(images/no-x.gif);
+	background-repeat: no-repeat;
+	background-position: 0 .5em;
+	text-align:left;
+	vertical-align:middle;
+}

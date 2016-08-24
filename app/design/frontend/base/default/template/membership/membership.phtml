@@ -1,0 +1,76 @@
+<?php $packages = $this->getPackages()?>
+<div class="ms-membership">
+	<div class="page-title form-group">
+		<h1><?php echo $this->__('Welcome To Our Membership Program') ?></h1>
+	</div>
+	<?php	echo($this->getWelcomeMessage());?>
+	<div class="membership-steps form-group" id="membership-signup-steps">
+		<ol>
+			<li class="step1 first col-sm-4 col-xs-12"><span class="number"><?php echo $this->__('Step 1');?></span><span><?php echo $this->__('Select the right package');?></span></li>
+			<div class="hidden-lg hidden-md hidden-sm">&nbsp;</div>
+			<li class="step2 col-sm-4 col-xs-12"><span class="number"><?php echo $this->__('Step 2');?></span><span><?php echo $this->__('Order Info/Payment option');?></span></li>
+			<div class="hidden-lg hidden-md hidden-sm">&nbsp;</div>
+			<li class="step3 last col-sm-4 col-xs-12"><span class="number"><?php echo $this->__('Step 3');?></span><span><?php echo $this->__('Start to buy products with membership price');?></span></li>
+		</ol>
+	</div>
+	<?php if($packages->getSize()):?>
+		<div class="packages" id="packages">
+			<div class="row">
+			<?php foreach($packages as $package){ ?>
+				<!--div class="col-md-24 col-sm-3 col-xs-6 col-tn-12" <?php //echo $this->getViewUrl($package) ?>-->
+				<div class="col-sm-4 col-xs-6 col-tn-12" <?php //echo $this->getViewUrl($package) ?>>
+				<div class="package text-center">
+					<div class="package-name col-xs-12"><?php echo $package->getPackageName() ?></div>
+					<p class="package-price">
+						<label><?php echo $this->__('Price:');?></label>
+						<?php echo $this->helper('core')->currency($package->getPackagePrice())?>
+					</p>
+					<p>
+						<label><?php echo $this->__('Duration:');?></label>
+						<strong><?php echo $package->getDuration()?> <?php echo $package->getUnitTimeLabel();?></strong>
+					</p>
+					<div class="package-detail text-left"><?php echo $this->limitString($package->getDescription(),65); ?></div>
+					<div class="action col-sm-6 col-xs-6 col-tn-12">
+                                            <a href="<?php echo $this->getViewUrl($package) ?>"><?php echo $this->__('View Detail');?></a>
+					</div>
+					<div class="hidden-lg hidden-md hidden-sm hidden-xs col-xs-12">&nbsp;</div>
+					<?php
+					$customerId = Mage::getModel('customer/session')->getCustomer()->getId();
+					if($customerId) {
+						$memberId = Mage::helper('membership')->getMemberId($customerId);
+						if($memberId) {
+							$memberpackage = Mage::helper('membership')->isSignedUpPackage($memberId,$package->getId());
+							if($memberpackage) {
+								if($memberpackage->getStatus()==1)
+									$buyButton = 2;
+								else $buyButton = 1;
+							} else $buyButton = 1;
+						} else $buyButton = 1;
+					} else $buyButton = 1;
+
+					switch($buyButton) {
+						case 1: ?>
+							<!-- Sign Up Now -->
+							<div class="action col-sm-6 col-xs-6 col-tn-12"><a href='<?php echo Mage::getUrl('membership/index/addToCartUrl',array('productId'=>$package->getProductId()))?>'>Sign Up Now</a></div>
+							<!-- Signed Up -->
+							<?php break;
+						case 2: ?>
+							<div class="action col-sm-6 col-xs-6 col-tn-12">
+								<a href="<?php echo $this->getUrl('*/plan/index') ?>"><?php echo $this->__('Signed Up')?></a>
+							</div>
+							<?php if($memberpackage->getEndTime()) {
+								$endTime = $this->formatDate($memberpackage->getEndTime(),'medium',false);
+								?>
+								<div class="col-xs-12 expire"><?php echo $this->__('Expire on %s',$endTime) ?></div>
+							<?php } ?>
+							<?php break; } ?>
+					</div>
+				</div>
+			<?php }?>
+			</div>
+		</div>
+	<?php  else:?>
+		<h4><?php echo $this->__('There is no package available') ?></h4>
+	<?php endif;?>
+</div>
+

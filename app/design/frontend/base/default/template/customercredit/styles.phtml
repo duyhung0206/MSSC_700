@@ -1,0 +1,13 @@
+<?php $store_id = Mage::app()->getStore()->getStoreId(); ?>
+<style>
+    .title-credit h2.title-credit-label
+    {
+        background-color:#<?php echo Mage::getStoreConfig('customercredit/style_management/background_title', $store_id) ?>;
+        color: #<?php echo Mage::getStoreConfig('customercredit/style_management/color_title', $store_id) ?>;
+    }   
+    @media screen and (max-width: 767px) {       
+        .customercredit-search-button {
+            background-color:#<?php echo Mage::getStoreConfig('customercredit/style_management/background_title', $store_id) ?>;
+        }
+    }
+</style>

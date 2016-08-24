@@ -1,0 +1,43 @@
+<!--@subject {{var store.getFrontendName()}}: New Membership Package  # {{var package.getPackageName()}} @-->
+<!--@vars
+{"store url=\"\"":"Store Url",
+"skin url=\"images/logo_email.gif\" _area='frontend'":"Email Logo Image",
+"htmlescape var=$member.getMemberName()":"Member Name",
+"var store.getFrontendName()":"Store Name",
+"store url=\"customer/account/\"":"Customer Account Url",
+}
+@-->
+<!--@styles
+body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif; }
+@-->
+
+<div style="font:11px/1.35em Verdana, Arial, Helvetica, sans-serif;">
+<table cellspacing="0" cellpadding="0" border="0" width="98%" style="margin-top:10px; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif; margin-bottom:10px;">
+<tr>
+    <td align="center" valign="top">
+        <!-- [ header starts here] -->
+        <table cellspacing="0" cellpadding="0" border="0" width="650">
+            <tr>
+                <td valign="top"><a href="{{store url=""}}"><img src="{{skin url="images/logo_email.gif" _area='frontend'}}" alt="{{var store.getFrontendName()}}"  style="margin-bottom:10px;" border="0"/></a></td>
+            </tr>
+        </table>
+        <!-- [ middle starts here] -->
+        <table cellspacing="0" cellpadding="0" border="0" width="650">
+            <tr>
+                <td valign="top">
+                    
+					<strong>Dear {{htmlescape var=$member.getMemberName()}}</strong>,<br/>
+					Thank you very much for purchasing {{var package.getPackageName()}} , please click the following link to see its detail
+					<a href="{{var memberPackage.getPackageViewUrl()}}">{{var memberPackage.getPackageViewUrl()}}</a>
+					
+					<p>If you have any questions about our membership program, please email us at <a href="mailto:{{config path='trans_email/ident_support/email'}}" style="color:#1E7EC8;">{{config path='trans_email/ident_support/email'}}</a></p>				
+					<p>Thank you for your business.</p><br />					
+					<p>Best Regards,</p>
+					<p>{{var store.getFrontendName()}}</p>					
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+</table>
+</div>

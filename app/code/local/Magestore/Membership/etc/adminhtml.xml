@@ -1,0 +1,100 @@
+<?xml version="1.0"?>
+<config>
+    <menu>
+        <membership module="membership">
+            <title>Membership</title>
+            <sort_order>71</sort_order>               
+            <children>
+                <member module="membership">
+                    <title>Manage Members</title>
+                    <sort_order>0</sort_order>
+                    <action>adminhtml/membership_member</action>
+                </member>
+                <package module="membership">
+                    <title>Manage Packages</title>
+                    <sort_order>1</sort_order>
+                    <action>adminhtml/membership_package</action>
+                </package>				
+                <group module="membership">
+                    <title>Manage Product Groups</title>
+                    <sort_order>2</sort_order>
+                    <action>adminhtml/membership_group</action>
+                </group>
+                <paymenthistory module="membership">
+                    <title>Manage Payment History</title>
+                    <sort_order>3</sort_order>
+                    <action>adminhtml/membership_paymenthistory</action>
+                </paymenthistory>		
+<!--                <memberpackage module="membership">
+                    <title>Manage Member Package</title>
+                    <sort_order>4</sort_order>
+                    <action>adminhtml/membership_memberpackage</action>
+                </memberpackage>-->
+                <settings module="membership">
+                    <title>Settings</title>
+                    <sort_order>5</sort_order>
+                    <action>adminhtml/system_config/edit/section/membership</action>
+                </settings>
+            </children>
+        </membership>
+    </menu>
+    <acl>
+        <resources>
+            <all>
+                <title>Allow Everything</title>
+            </all>
+            <admin>
+                <children>		
+                    <system>
+                        <children>
+                            <config>
+                                <children>
+                                    <membership translate="title" module="membership">
+                                        <title>Membership</title>
+                                        <sort_order>50</sort_order>									
+                                    </membership>								
+                                </children>
+                            </config>
+                        </children>
+                    </system>	
+                    <membership module="membership">
+                        <title>Membership</title>
+                        <sort_order>71</sort_order>               
+                        <children>
+                            <member module="membership">
+                                <title>Manage Members</title>
+                                <sort_order>0</sort_order>
+                                <action>adminhtml/membership_member</action>
+                            </member>
+                            <package module="membership">
+                                <title>Manage Packages</title>
+                                <sort_order>1</sort_order>
+                                <action>adminhtml/membership_package</action>
+                            </package>				
+                            <group module="membership">
+                                <title>Manage Product Groups</title>
+                                <sort_order>2</sort_order>
+                                <action>adminhtml/membership_group</action>
+                            </group>
+                            <paymenthistory module="membership">
+                                <title>Manage Payment History</title>
+                                <sort_order>3</sort_order>
+                                <action>adminhtml/membership_paymenthistory</action>
+                            </paymenthistory>		
+<!--                            <memberpackage module="membership">
+                                <title>Manage Member Package</title>
+                                <sort_order>4</sort_order>
+                                <action>adminhtml/membership_memberpackage</action>
+                            </memberpackage>-->
+                            <settings module="membership">
+                                <title>Settings</title>
+                                <sort_order>4</sort_order>
+                                <action>adminhtml/system_config/edit/section/membership</action>
+                            </settings>
+                        </children>
+                    </membership>					
+                </children>
+            </admin>
+        </resources>
+    </acl>
+</config>

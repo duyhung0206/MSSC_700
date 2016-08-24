@@ -1,0 +1,105 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<style>
+    #product_composite_configure{
+        margin-top: -180px !important;
+        /*position: relative;*/
+    }
+    .adminhtml-sales-order-create-index #popup-window-mask{
+        z-index: 100 !important;
+    }
+</style>
+<?php /* @var $this Mage_Adminhtml_Block_Catalog_Product_Composite_Fieldset_Configurable */ ?>
+<?php
+$store = Mage::getSingleton('adminhtml/session_quote')->getStore();
+$_product = $this->getProduct();
+$_creditAmount = $this->getCreditAmount($_product);
+?>
+<div id="catalog_product_composite_configure_fields_customercredit">
+    <h4><?php echo Mage::helper('customercredit')->__('Store Credit Product') ?></h4>
+    <div class="product-options">
+        <dl>
+            <?php if ($_creditAmount['type'] == 'range'): ?>
+                <?php
+                $includeTax = ( Mage::getStoreConfig('tax/display/type') != 1 );
+                $rateTax = Mage::helper('tax')->getPrice($_product, 100, $includeTax) / 100;
+                ?>
+                <dt><label class="required"><em>*</em><?php echo 'Enter credit value' ?></label></dt>
+                <dd>
+                    <div class="input-box">
+                        <input id="amount_range" name="amount" class="required-entry validate-greater-than-zero" onchange="validateInputRange(this, <?php echo $_creditAmount['from'] ?>, <?php echo $_creditAmount['to'] ?>, '<?php echo $store->getCurrentCurrency()->format(1000, array(), false); ?>');" value="<?php echo $this->getOptionProduct('amount'); ?>" />
+                        (<span class="price"><?php echo $_creditAmount['from_txt'] ?></span> -  <span class="price"><?php echo $_creditAmount['to_txt'] ?></span>)
+                    </div>
+                </dd>
+            <?php elseif ($_creditAmount['type'] == 'dropdown'): ?>
+                <dt><label class="required"><em>*</em><?php echo 'Select credit value' ?></label></dt>
+                <dd>
+                    <div class="input-box">
+                        <select id="amount_dropdown" name="amount" class="required-entry select">
+                            <?php $options = array_combine($_creditAmount['options'], $_creditAmount['options_txt']) ?>
+                            <?php foreach ($options as $value => $label): ?>
+                                <option value="<?php echo $value ?>" <?php if ($value == $this->getOptionProduct('amount')) echo 'selected' ?> ><?php echo $label ?></option>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
+                </dd>    
+            <?php elseif ($_creditAmount['type'] == 'static'): ?>
+                <dt><label class="required"><em>*</em><?php echo $this->__('Store Credit value: <span class="regular-price">%s</span>', $_creditAmount['value_txt']) ?></label></dt>
+                <dd>
+                    <div class="input-box">
+                        <input type="hidden" name="amount" value="<?php echo $_creditAmount['value'] ?>" />
+                    </div>
+                </dd>                        
+            <?php endif ?>
+
+                <dd class="last">
+                    <div class="input-box">
+                        <input type="checkbox" value="1" name="send_friend" id="send_friend" onclick="sendCreditToFriend(this);" <?php if ($this->getOptionProduct('send_friend')) echo 'checked' ?> />
+                        <label for="send_friend"><?php echo $this->__('Send Credit to friend') ?></label>
+                    </div>
+                    <br>
+                    <div class="customercredit-receiver" id="customercredit-receiver" style="<?php if (!$this->getOptionProduct('send_friend')) echo 'display:none;' ?>">
+                        <p>
+                            <label for="customer_name"><?php echo $this->__('Sender name (optional):') ?></label><br />
+                            <input type="text" name="customer_name" id="customer_name" value="<?php echo $this->getOptionProduct('customer_name') ?>" maxlength="30"/>
+                        </p>
+                        <p>
+                            <label for="recipient_name"><?php echo $this->__('Recipient name:') ?></label><br />
+                            <input type="text" name="recipient_name" id="recipient_name" value="<?php echo $this->getOptionProduct('recipient_name') ?>"  maxlength="30"/>
+                        </p>
+                        <p>
+                            <label class = "recipient_email" for="recipient_email"><?php echo $this->__('Recipient email address:') ?></label><br />
+                            <input type="text" name="recipient_email" id="recipient_email" value="<?php echo $this->getOptionProduct('recipient_email') ?>" />
+                        </p>
+                        <p>
+                        <label class = "message" for="message"><?php echo $this->__('Custom message') ?></label><br />
+                        <textarea name="message" id="message" class=""><?php echo $this->getOptionProduct('message') ?></textarea><br />
+                    </div>
+                </dd>  
+        </dl>
+    </div>
+</div>

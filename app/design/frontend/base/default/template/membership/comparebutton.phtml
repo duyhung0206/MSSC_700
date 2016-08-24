@@ -1,0 +1,7 @@
+<?php if($this->isProductInMembership()){?>
+    <div class="compare-package block-compare">
+        <a href="#" onclick="popWin('<?php echo $this->getCompareUrl()?>','compare','top:0,left:0,width=820,height=350,resizable=yes,scrollbars=yes')" class="button" title="<?php echo $this->__('Compare Membership Packages Price') ?>">
+            <?php echo $this->__('View Membership Price') ?>
+        </a>
+    </div>
+<?php }?>

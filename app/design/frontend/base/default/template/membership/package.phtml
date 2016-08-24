@@ -1,0 +1,70 @@
+<?php $package = $this->getPackage()?>
+<div class="ms-membership">
+<div class="page-title form-group">
+	<h1 class="col-xs-9"><?php echo $this->__($package->getPackageName()) ?></h1>
+	<?php
+	$customerId = Mage::getModel('customer/session')->getCustomer()->getId();
+	if($customerId) {
+		$memberId = Mage::helper('membership')->getMemberId($customerId);
+		if($memberId) {
+			$memberpackage = Mage::helper('membership')->isSignedUpPackage($memberId,$package->getId());
+			if($memberpackage) {
+				if($memberpackage->getStatus()==1)
+					$showSignUpButton = 0;
+				else $showSignUpButton = 1;
+			} else $showSignUpButton = 1;
+		} else $showSignUpButton = 1;
+	} else $showSignUpButton = 1;
+	if($showSignUpButton==1) {
+		?>
+		<div class="col-xs-3 text-right">
+			<a href="<?php echo Mage::getUrl('membership/index/addToCartUrl', array('productId'=>$package->getProductId())) ?>"><?php echo $this->__('Sign up Now');?></a>
+		</div>
+	<?php } ?>
+</div>
+<div class="form-group package-description">
+	<?php	echo($package->getDescription());?>
+</div>
+	<div class="membership-steps form-group" id="membership-signup-steps">
+	<ol>
+		<li class="step1 first col-sm-4 col-xs-12"><span class="number"><?php echo $this->__('Step 1');?></span><span><?php echo $this->__('Select the right package');?></span></li>
+		<div class="hidden-lg hidden-md hidden-sm">&nbsp;</div>
+		<li class="step2 col-sm-4 col-xs-12"><span class="number"><?php echo $this->__('Step 2');?></span><span><?php echo $this->__('Order Info/Payment option');?></span></li>
+		<div class="hidden-lg hidden-md hidden-sm">&nbsp;</div>
+		<li class="step3 last col-sm-4 col-xs-12"><span class="number"><?php echo $this->__('Step 3');?></span><span><?php echo $this->__('Start to buy products with membership price');?></span></li>
+	</ol>
+</div>
+<?php $products = $this->getProductCollection() ?>
+<?php if(count($products)){?>
+<div class="form-group"><?php echo $this->getPagerHtml() ?></div>
+<div class="table-responsive form-group">
+<table class="packages-table table table-bordered table-hover" id="packages-table">
+    <thead>
+        <tr>
+			<th class="first"><?php echo $this->__('Product') ?></th>
+            <th><?php echo $this->__('Product Regular Price') ?></th>
+            <th><?php echo $this->__('Product Price for Membership ') ?></th>
+            <th><?php echo $this->__('You Saved') ?></th>
+            <th><?php echo $this->__('View Product') ?></th>
+        </tr>
+    </thead>
+    <tbody>
+		<?php foreach($products as $product){ ?>
+        <?php $membershipPrice = $this->helper('membership')->getMembershipPrice($product->getId(), $package)?>
+		<tr onclick="window.location.href='<?php echo $this->getViewUrl($product) ?>'">
+			<td class="first"><?php echo $product->getName() ?></td>
+			<td><?php echo $this->helper('core')->currency($product->getPrice())?></td>
+			<td><?php echo $this->helper('core')->currency($membershipPrice) ?></td>
+            <td><?php echo $this->helper('core')->currency($product->getPrice() - $membershipPrice) ?></td>
+			<td><span class="action"><a href="<?php echo $this->getViewUrl($product) ?>"><?php echo $this->__('Buy Now') ?></span></a></td>
+		</tr>
+		<?php }?>
+	</tbody>
+</table>
+</div>
+<script type="text/javascript">
+	decorateTable('packages-table');
+</script>
+<div class="form-group"><?php echo $this->getPagerHtml() ?></div>
+<?php }?>
+</div>

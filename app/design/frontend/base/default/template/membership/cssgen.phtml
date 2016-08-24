@@ -1,0 +1,47 @@
+<?php
+    $storeId = Mage::app()->getStore()->getStoreId();
+    $configs = Mage::getStoreConfig('membership/styles', $storeId);
+?>
+<style type="text/css">
+    .package .package-name,
+    .membership-steps ol li span.number,
+    .ms-membership .packages-table thead tr th,
+    .ms-membership .page-title .text-right a,
+    .package .action a,
+    .ms-membership .packages-table .action a{
+        background:#<?php echo $configs['box_color'] ?>;
+    }
+    .packages div.package{
+        border-color:#<?php echo $configs['box_color'] ?>;;
+    }
+    .packages div.package:hover{
+        border-color:#<?php echo $configs['box_hover_color'] ?>;;
+    }
+    .packages div.package:hover .package-name,
+    .packages div.package:hover .action a,
+    .ms-membership .packages-table  tbody  tr:hover .action a,
+    .ms-membership .page-title .text-right a:hover{
+        background:#<?php echo $configs['box_hover_color'] ?>; ;
+    }
+    .package .action a,
+    .ms-membership .packages-table .action a,
+    .package .package-name,
+    .ms-membership .packages-table thead tr th{
+        color: #<?php echo $configs['title_color'] ?>;;
+    }
+    .packages div.package:hover .action a,
+    .packages div.package:hover .package-name,
+    .ms-membership .packages-table tbody tr:hover .action a,
+    .ms-membership .page-title .text-right a:hover{
+        color: #<?php echo $configs['title_hover_color'] ?>;;
+    }
+    .ms-membership,
+    .packages .package,
+    .membership-steps ol li span,
+    .ms-membership .table tbody  tr  td,
+    .ms-membership .package-description
+    {
+        color: #<?php echo $configs['text_color'] ?>;;
+    }
+    <?php echo $configs['customize']; ?>
+</style>

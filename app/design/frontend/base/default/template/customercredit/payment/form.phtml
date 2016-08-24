@@ -1,0 +1,119 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * Payment form template
+ */
+?>
+
+<?php $state = Mage::app()->getRequest()->getRequestedRouteName(); ?>
+<?php $_code = 'customercredit' ?>
+<?php if (Mage::helper('customercredit')->getGeneralConfig('enable')): ?>
+    <dl id="<?php echo $_code ?>_container">
+        <?php if (Mage::helper('customer')->isLoggedIn() && Mage::helper('customercredit/account')->customerGroupCheck() && !$this->hasCustomerCreditItemOnly()): ?>
+            <dt class="<?php echo $_code ?>">
+            <input type="checkbox" style="display:none" name="payment[<?php echo $_code ?>]" id="<?php echo $_code . "check" ?>" onclick="changeUseCustomercredit(this, '<?php echo $this->getUrl('customercredit/index/checkCredit') ?>');" checked="checked"/> 
+            <?php if ($this->hasCustomerCreditItem()) : ?>
+            <ul>
+                <li class="message-notice">
+                    <ul class="notice-msg">
+                        <li><?php echo $this->__('Store Credit cannot be used to purchase Store Credit products') ?></li>
+                    </ul>
+                </li>
+            </ul><br>
+            <?php endif; ?>
+            <label for="<?php echo $_code ?>" style="font-weight: bold; color: #666;display:inline;float:none;padding-left:10px"><?php echo $this->__('Use Customer Credit to check out  (') ?> <b id="customercredit_balance"> <?php echo $this->getAvaiableCustomerCreditLabel() ?> </b> <?php echo $this->__(" available )"); ?></label>
+            <form action="" method="post" onsubmit="return false;" id="customercredit-payment-form">
+                <div id="cc_checkout">
+                    <div class="checkout-credit-use">
+                        <span style="float:left;margin-right: 5px;"><strong style="margin-left: 7px;"> <?php echo $this->__('You\'re using:') ?></strong></span>
+                        <span style="float: left" id="checkout-cc-input"><strong><?php echo $this->getCurrentCreditAmountLabel(); ?></strong></span>
+                        <div style="float: left;clear: both;margin-top: 10px; display: none" class="checkout_cc_input_alert" id="checkout_cc_input_alert">
+                            <input type="text" id="checkout_cc_inputtext" onchange="validateCheckOutCC(<?php echo $this->getCustomerCredit() ?>);" class="input-text validate-number validate-zero-or-greater required-entry form-control" value="<?php echo $this->getCurrentCreditAmount(); ?>" />
+                            <div class="validation-advice" style="display:none" id="advice-validate-number-checkout_cc_smaller"><?php echo $this->__('Please enter a number smaller than %s.', $this->getCustomerCreditLabel()); ?></div>
+                        </div>                            
+                        <img id="customercredit_cc_success_img" style=" display: none;float: left;margin-right: 4px;" src="<?php echo $this->getSkinUrl('images/customercredit/i_msg-success.gif') ?>"/>
+                        <div id="loading-credit" style="display: none;float: left; margin-left: 7px;margin-top: 12px;">
+                            <p id="customercredit_cc_show_loading">
+                                <img src="<?php echo $this->getSkinUrl('images/customercredit/opc-ajax-loader.gif') ?>"/>
+                                <?php echo $this->__('Loading...') ?>
+                            </p>
+                        </div>
+                        <span class="edit-credit" id="checkout-cc-img"><img style="cursor: pointer;height: 15px;width: 15px;margin-left: 3px;" onclick="showEditText(this);"src="<?php echo $this->getSkinUrl('images/customercredit/btn_edit.gif'); ?>"></span>
+                        <?php
+                        $moduleOnestepActive = Mage::getConfig()->getModuleConfig('Magestore_Onestepcheckout')->is('active', 'true');
+                        ?>
+                        <div class="buttons" style="clear:both"> 
+                            <?php
+                            if ($moduleOnestepActive && Mage::getStoreConfig('onestepcheckout/general/active') == '1') {
+                                ?>
+                                <button type="submit" class="button" id="checkout-cc-button" style="display: none;" onclick="updateCustomerCredit('<?php echo $this->getUpdateUrl(); ?>',<?php echo $this->getCustomerCredit() ?>, '<?php echo $state ?>');">
+                                    <span><span>Apply</span></span>
+                                </button>
+
+                                <button type="button" class="button" id="checkout-cc-button-cancel" style="display: none;" onclick="updateCustomerCredit('<?php echo $this->getUpdateUrl(); ?>', 0 , '<?php echo $state ?>' );">
+                                    <span><span>Cancel</span></span>
+                                </button>
+                            <?php } else { ?>
+                                <button type="submit" class="button" id="checkout-cc-button" style="display: none;" onclick="updateCustomerCredit('<?php echo $this->getUpdateUrl(); ?>',<?php echo $this->getCustomerCredit() ?>, '<?php echo $state ?>');">
+                                    <span><span>Apply</span></span>
+                                </button>
+                                <button type="button" class="button" id="checkout-cc-button-cancel" style="display: none;" onclick="updateCustomerCredit('<?php echo $this->getUpdateUrl(); ?>', 0, '<?php echo $state ?>');">
+                                    <span><span>Cancel</span></span>
+                                </button>
+                            <?php } ?>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        <?php elseif (Mage::helper('customer')->isLoggedIn() && !Mage::helper('customercredit/account')->customerGroupCheck()): ?>
+            
+        <?php elseif ($this->hasCustomerCreditItemOnly()) : ?>
+            <ul>
+                <li class="message">
+                    <ul class="notice-msg">
+                        <li><?php echo $this->__('Store Credit cannot be used to purchase Store Credit products') ?></li>
+                    </ul>
+                </li>
+            </ul><br>
+        <?php else: ?>
+            <div>
+                <div class="checkout-cart-credit-amount">
+                    <p>
+                        <?php echo $this->__('Please ') . "<a href=\"" . $this->getUrl('customer/account/login') . "\">" . $this->__('login') . "</a>" . $this->__(' to use customer credit.'); ?>
+                    </p>
+                </div>
+            </div>
+        <?php endif ?>
+        <script type="text/javascript">
+            var ccPaymentForm = new VarienForm('customercredit-payment-form', true);
+
+        </script>
+        </dt>
+    </dl>
+<?php endif ?>
+

@@ -1,0 +1,71 @@
+<!--@subject Your store credit balance is updated @-->
+<!--@vars
+{"htmlescape var=$name":"Recipient Name",
+"htmlescape var=$sendername":"Sender name",
+"var code":"Customer Credit Code",
+"var balance":"Customer Credit Balance",
+"var status":"Status",
+"htmlescape var=$message":"Message",
+"var expiredat":"Expired At"}
+@-->
+
+<!--@styles
+body,td { background:#FFFFFF; margin:0; padding:0; color:#2f2f2f; font:15px/1.35em Verdana, Arial, Helvetica, sans-serif; }
+pre{ white-space: pre-wrap; white-space: -moz-pre-wrap; white-space: -pre-wrap; white-space: -o-pre-wrap; word-wrap: break-word;}
+@-->
+
+<div style="font:15px/1.35em Verdana, Arial, Helvetica, sans-serif;">
+    <table cellspacing="0" cellpadding="0" border="0" width="98%" style="margin-top:10px; font:15px/1.35em Verdana, Arial, Helvetica, sans-serif; margin-bottom:10px;">
+        <tr>
+            <td align="center" valign="top">
+                <!-- [ header starts here] -->
+                <table cellspacing="0" cellpadding="0" border="0" width="650">
+                    <tr>
+                        <td valign="top">
+                            <a href="{{store url=""}}">
+                                <img src="{{skin url="images/logo_email.gif" _area='frontend'}}" alt="{{var store.getFrontendName()}}"  style="margin-bottom:10px;" border="0"/>
+                            </a>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- [ middle starts here] -->
+                <table cellspacing="0" cellpadding="0" border="0" width="650">
+                    <tr>
+                        <td valign="top">
+                            <p>
+                                <strong>Dear {{htmlescape var=$receiver_name}}</strong>,<br/>
+                                {{if addcredit}}
+                                We are glad to inform you that you have just received credit(s) from <strong><a href="{{var storeurl}}">{{var store.getFrontendName()}}</a></strong>  
+                                {{/if}}
+                                {{if deductcredit}}
+                                Your credit balance at <strong><a href="{{var storeurl}}">{{var store.getFrontendName()}}</a></strong> has just deducted
+                                {{/if}}
+                                {{if message}} with a message:<br/>
+                                {{var message}} 
+                                {{/if}}.
+                            <p>
+                                {{if addcredit}}
+                                Number of credit received:
+                                {{/if}}
+                                {{if deductcredit}}
+                                Number of credit deducted:
+                                {{/if}}
+                                <b>{{var value}}</b><br/>
+                                Your current credit balance: <b>{{var balance}}</b></p>
+                            {{if addcredit}}
+                            You can use the credits to check out or send to your friends at <b><a href="{{var storeurl}}">{{var store.getFrontendName()}}</a></b>.<br/>
+                            {{/if}}
+
+                            {{if deductcredit}}
+                            The credit can be used to check out or send to your friends at <b><a href="{{var storeurl}}">{{var store.getFrontendName()}}</a></b>.<br/>
+
+                            {{/if}}
+                            <p>Yours sincerely,<br/><strong><a href="{{var storeurl}}">{{var store.getFrontendName()}}</a></strong></p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</div>

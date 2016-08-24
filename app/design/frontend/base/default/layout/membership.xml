@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <default>
+        <reference name="top.links">
+            <action method="addLink" translate="label title" module="membership">
+                <label>Membership</label>
+                <url helper="membership/getMembershipUrl"/>
+                <title>Membership</title>
+                <prepare/>
+                <urlParams/>
+                <position>10</position>
+            </action>
+        </reference>
+        <reference name="head">
+            <action method="addCss">
+                <styleSheet>css/magestore/membershiplibrary.css</styleSheet>
+            </action>
+            <action method="addCss">
+                <styleSheet>css/magestore/membership.css</styleSheet>
+            </action>
+        </reference>
+    </default>
+    <membership_index_index>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="membership/membership" name="membership" template="membership/membership.phtml" />
+        </reference>
+        <reference name="after_body_start">
+            <block type="core/template" name="membership_cssgen" template="membership/cssgen.phtml" />
+        </reference>
+    </membership_index_index>
+    <membership_package_view>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>page/1column.phtml</template>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="membership/package" name="package" template="membership/package.phtml" />
+        </reference>
+        <reference name="after_body_start">
+            <block type="core/template" name="membership_cssgen" template="membership/cssgen.phtml" />
+        </reference>
+    </membership_package_view>
+	
+    <membership_package_compare translate="label">
+        <label>Membership Package Compare List</label>
+        <reference name="root">
+            <action method="setTemplate">
+                <template>page/popup.phtml</template>
+            </action>
+        </reference>
+        <reference name="head">
+            <action method="addJs">
+                <script>scriptaculous/scriptaculous.js</script>
+            </action>
+            <action method="addJs">
+                <script>varien/product.js</script>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="membership/compare" name="membership.compare" template="membership/compare.phtml"/>
+        </reference>
+        <reference name="after_body_start">
+            <block type="core/template" name="membership_cssgen" template="membership/cssgen.phtml" />
+        </reference>
+    </membership_package_compare>
+	
+    <customer_account>
+        <reference name="customer_account_navigation">
+            <action method="addLink" translate="label" module="membership">
+                <name>Membership Plan</name>
+                <path>membership/plan/index</path>
+                <label>Membership Plan</label>
+            </action>
+        </reference>
+        <reference name="after_body_start">
+            <block type="core/template" name="membership_cssgen" template="membership/cssgen.phtml" />
+        </reference>
+    </customer_account>
+	
+    <membership_plan_index>
+        <update handle="customer_account"/>
+        <reference name="content">
+            <block type="membership/plan" name="membership_plan" template="membership/plan.phtml" />
+        </reference>
+    </membership_plan_index>
+	
+    <catalog_product_view>
+        <reference name="product.info">
+            <block type="membership/compare" name="membership" as="other" template="membership/comparebutton.phtml" />
+        </reference>
+    </catalog_product_view>
+</layout>

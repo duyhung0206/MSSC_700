@@ -1,0 +1,202 @@
+<?php
+/**
+ * Magento
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE_AFL.txt.
+ * It is also available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/afl-3.0.php
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to license@magentocommerce.com so we can send you a copy immediately.
+ *
+ * DISCLAIMER
+ *
+ * Do not edit or add to this file if you wish to upgrade Magento to newer
+ * versions in the future. If you wish to customize Magento for your
+ * needs please refer to http://www.magentocommerce.com for more information.
+ *
+ * @category    design
+ * @package     default_default
+ * @copyright   Copyright (c) 2012 Magento Inc. (http://www.magentocommerce.com)
+ * @license     http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+$store = Mage::app()->getStore();
+$_product = $this->getProduct();
+$_creditAmount = $this->getCreditAmount($_product);
+$_formData = $this->getFormConfigData();
+$currencySymbol = Mage::app()->getLocale()->currency(Mage::app()->getStore()->getCurrentCurrencyCode())->getSymbol();
+?>
+<div class="price-box">
+    <span class="regular-price">
+        <span class="price" id="storecredit-product-price">
+        </span>
+    </span>
+</div>
+<input type="hidden" name="credit_price_amount" id="credit_price_amount" value="0" />
+<script type="text/javascript">
+//<![CDATA[    
+    var creditAmountChange = <?php echo Mage::helper('core')->jsonEncode($_creditAmount) ?>;
+    var storecreditPriceFomat = <?php echo $this->getPriceFormatJs() ?>;
+    Event.observe(window, 'load', function() {
+        if ($$('.product-shop')[0] && $$('.product-shop')[0].down('.price-info'))
+            $$('.product-shop')[0].down('.price-info').setStyle({'display': 'none'});
+    });
+//]]>    
+</script>
+<div class="customercredit-product-info">
+    <?php if ($_creditAmount['type'] == 'range'): ?>
+        <?php
+        $includeTax = ( Mage::getStoreConfig('tax/display/type') != 1 );
+        $rateTax = Mage::helper('tax')->getPrice($_product, 100, $includeTax) / 100;
+        ?>
+        <div style="float: left;width: 100%;">
+            <p class="type1">
+                <label class="required" style="font-size: 15px; font-weight: bold" for="amount"><?php echo $this->__('Enter Credit Value') ?></label>
+                <input style="max-width: 135px;" id="credit_amount_range" name="amount" class="input-text required-entry validate-greater-than-zero" onchange="validateInputRange(this);" value="<?php echo $_formData->getAmount() ?>" />
+            </p>
+            <div class="product-review">(<span class="price"><?php echo $_creditAmount['from_txt'] ?></span> -  <span class="price"><?php echo $_creditAmount['to_txt'] ?></span>)</div>
+        </div>
+        <script type="text/javascript">
+            //<![CDATA[
+            var rateTax = <?php echo $rateTax ?>;
+            var result = [];
+            priceFormat = '<?php echo $store->getCurrentCurrency()->format(1000, array(), false); ?>';
+            price = priceFormat.match('1.000.00')[0];
+            result['decimalSymbol'] = price.charAt(5);
+            result['groupSymbol'] = price.charAt(1);
+
+            if (!$('credit_amount_range').value)
+                $('credit_amount_range').value = <?php echo $_creditAmount['from'] ?>;
+            function validateInputRange(el) {
+                var credit_amount_min = <?php echo $_creditAmount['from'] ?>;
+                var credit_amount_max = <?php echo $_creditAmount['to'] ?>;
+
+                validateValue = el.value.replace(/\s/g, '');
+                if (validateValue.search(result.groupSymbol) != -1)
+                    validateValue = validateValue.replace(result.groupSymbol, '');
+                el.value = validateValue.replace(result.decimalSymbol, '.');
+                $('credit_amount_range').value = el.value;
+
+                if (el.value < credit_amount_min)
+                    el.value = credit_amount_min;
+                if (el.value > credit_amount_max)
+                    el.value = credit_amount_max;
+
+                changePriceByInput(el.value);
+            }
+            changePriceByInput($('credit_amount_range').value);
+            function changePriceByInput(value) {
+                $('storecredit-product-price').innerHTML = formatCurrency(value * creditAmountChange.storecredit_rate * rateTax, storecreditPriceFomat);
+                $('credit_price_amount').value = value * creditAmountChange.storecredit_rate * rateTax;
+            }
+            //]]>
+        </script>
+    <?php elseif ($_creditAmount['type'] == 'dropdown'): ?>
+        <p>
+            <label style="font-size: 15px; font-weight: bold" for="amount"><?php echo $this->__('Select Credit Value:') ?></label>
+            <select id="credit_amount_dropdown" name="amount" class="required-entry select" onchange="changePriceByInputDropdown(this);">
+                <?php $options = array_combine($_creditAmount['options'], $_creditAmount['options_txt']) ?>
+                <?php foreach ($options as $value => $label): ?>
+                    <option value="<?php echo $value ?>" <?php if ($value == $_formData->getAmount()) echo 'selected' ?> ><?php echo $label ?></option>
+                <?php endforeach ?>
+            </select>
+        </p>
+        </br>             
+        <script type="text/javascript">
+            //<![CDATA[
+            function changePriceByInputDropdown(el) {
+                $('storecredit-product-price').innerHTML = formatCurrency(creditAmountChange.prices[el.value], storecreditPriceFomat);
+                $('credit_price_amount').value = creditAmountChange.prices[el.value];
+            }
+            changePriceByInputDropdown($('credit_amount_dropdown'));
+            //]]>
+        </script>
+    <?php elseif ($_creditAmount['type'] == 'static'): ?>
+        <p></p><p>
+            <?php echo $this->__('Store Credit value: <span class="regular-price">%s</span>', $_creditAmount['value_txt']) ?>
+            <input type="hidden" name="amount" value="<?php echo $_creditAmount['value'] ?>" />
+            <script type="text/javascript">
+                //<![CDATA[
+                $('credit_price_amount').value = creditAmountChange.price;
+                $('storecredit-product-price').innerHTML = formatCurrency(creditAmountChange.price, storecreditPriceFomat);
+                //]]>
+            </script>
+        </p>
+    <?php elseif ($_creditAmount['type'] == 'any'): ?>
+        <p></p><p>
+            <label for="amount"><?php echo $this->__('Enter Amount:') ?></label>
+            <input id="amount" name="amount" onchange="changeValue(this)" class="input-text required-entry validate-greater-than-zero" value="<?php echo $_formData->getAmount() ?>" />
+        </p>
+        </br>
+        <?php echo $this->__('Credit Rate: ') ?>
+        <?php
+        $rate = $_product->getCreditRate();
+        echo $rate;
+        ?>
+        <br><?php echo $this->__('Credit Value: ') ?>
+        <span class="value" id="value"><?php echo Mage::helper('core')->currency($_product->getCreditValue()); ?></span>
+
+        <script type="text/javascript">
+            function changeValue(el) {
+                var rate = <?php echo $rate; ?>;
+                el.value = document.getElementById('amount').value;
+                document.getElementById('value').innerHTML = '<?php echo $currencySymbol; ?>' + el.value * rate;
+            }
+        </script>
+    <?php endif ?>
+    <p></p>
+    <?php if ($this->allowSendCredit()): ?>
+        <p class = "customercredit-send-friend">
+            <input type="checkbox" value="1" name="send_friend" id="send_friend" onclick="sendFriend(this);" <?php if ($_formData->getSendFriend()) echo 'checked' ?> />
+            <label for="send_friend"><?php echo $this->__('Send credit to friend') ?></label>
+            <script type="text/javascript">
+                //<![CDATA[
+                function sendFriend(el) {
+                    var receiver = $('customercredit-receiver');
+                    if (el.checked) {
+                        if (receiver)
+                            receiver.show();
+                    } else {
+                        if (receiver)
+                            receiver.hide();
+                    }
+                }
+                //]]>
+            </script>
+        </p>
+        <div class="customercredit-receiver" id="customercredit-receiver" style="<?php if (!$_formData->getSendFriend()) echo 'display:none;' ?>">
+            <p>
+                <label for="customer_name"><?php echo $this->__('Sender name (optional)') ?></label><br />
+                <input type="text" class="input-text" name="customer_name" id="customer_name" value="<?php echo $_formData->getCustomerName() ?>" maxlength="30"/>
+            </p>
+            <p>
+                <label class="required" for="recipient_name"><?php echo $this->__('Recipient name') ?></label><br />
+                <input type="text" class="input-text required-entry" name="recipient_name" id="recipient_name" value="<?php echo $_formData->getRecipientName() ?>"  maxlength="30"/>
+            </p>
+            <p>
+                <label class="required" for="recipient_email"><?php echo $this->__('Recipient email address') ?></label><br />
+                <input type="text" class="input-text required-entry validate-email validate-same-email" name="recipient_email" id="recipient_email" value="<?php echo $_formData->getRecipientEmail() ?>" />
+            </p>
+
+            <label class = "message" for="message"><?php echo $this->__('Custom message') ?></label><br />
+            <textarea name="message" id="message" class=""><?php echo $_formData->getMessage() ?></textarea><br />
+            <script type="text/javascript">
+                //<![CDATA[
+                same_email = '<?php echo $this->__('You cannot send credit to yourself.') ?>';
+                Validation.add('validate-same-email', same_email, function(v) {
+                    if (Validation.get('validate-email').test(v)) {
+                        if (v === '<?php echo Mage::getSingleton('customer/session')->getCustomer()->getEmail() ?>')
+                            return false;
+                    }
+                    return true;
+                });
+                //]]>
+            </script>
+        </div>  
+    <?php endif; ?>
+</div>

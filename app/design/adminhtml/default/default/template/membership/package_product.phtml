@@ -1,0 +1,24 @@
+<?php $package_id = Mage::app()->getRequest()->getParam('id'); ?>
+<div class="entry-edit">
+	<div class="entry-edit-head">
+		<h4 class="icon-head head-edit-form fieldset-legend"><?php echo $this->__('Select All Products'); ?></h4>
+	</div>
+	<div id="package_product_select" class="fieldset">
+		<div class="hor-scroll">
+			<table cellspacing="0" class="form-list">
+				<tbody>
+				<tr>
+					<td class="label"><label for="product_select_all"><?php echo $this->__('Select All Products') ?></label></td>
+					<td class="value">
+						<select class="select" name="product_select_all" id="product_select_all">
+							<option value=""><?php echo $this->__('-- Please Select --'); ?></option>
+							<option value="1"><?php echo $this->__('Select All Products') ?></option>
+							<option value="0"><?php echo $this->__('Unselect All Products') ?></option>
+						</select>          
+					</td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+</div>
