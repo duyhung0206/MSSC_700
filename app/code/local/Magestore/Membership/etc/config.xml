@@ -7,7 +7,7 @@
                 <update_package_when_state_order>complete</update_package_when_state_order>												
                 <new_package_email_template>magestore_membership_new_package</new_package_email_template>
                 <remain_renew_package_email_template>magestore_membership_notify_renew_package</remain_renew_package_email_template>
-				<auto_renew_package_email_template>magestore_membership_notify_auto_renew_package</auto_renew_package_email_template>
+				<notify_auto_renew_package_email_template>magestore_membership_notify_auto_renew_package</notify_auto_renew_package_email_template>
                 <send_email_to_member_before>5</send_email_to_member_before>												
                 <warning_day>5</warning_day>												
             </general>
