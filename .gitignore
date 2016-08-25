@@ -1,0 +1,136 @@
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Image #
+#########
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.bmp
+*.svg
+*.ico
+*.psd
+
+# Video #
+#########
+*.wmv
+*.mpg
+*.mpeg
+*.mp4
+*.mov
+*.flv
+*.avi
+*.ogv
+*.ogg
+*.webm
+
+# Audio #
+#########
+*.wav
+*.mp3
+*.wma
+
+# Fonts #
+#########
+*.eot
+*.ttf
+*.woff
+
+desktop.ini
+
+# IDE #
+#######
+.classpath
+.project
+.settings
+.idea
+.metadata
+*.iml
+*.ipr
+.idea
+
+# Magento #
+###########
+.htaccess
+.htaccess.sample
+api.php
+cron.php
+cron.sh
+favicon.ico
+get.php
+index.php
+index.php.sample
+install.php
+LICENSE.html
+LICENSE.txt
+LICENSE_AFL.txt
+mage
+php.ini.sample
+RELEASE_NOTES.txt
+dev/*
+downloader/*
+errors/*
+includes/*
+media/*
+shell/*
+var/*
+app/code/core/*
+app/etc/config.xml
+app/etc/local.xml
+app/etc/local.xml.additional
+app/etc/local.xml.template
+app/.htaccess
+app/bootstrap.php
+app/Mage.php
+media/catalog/*
+lib/3Dsecure/*
+lib/Cm/*
+lib/Credis/*
+lib/flex/*
+lib/LinLibertineFont/*
+lib/Mage/*
+lib/Magento/*
+lib/Net/*
+lib/PEAR/*
+lib/Pelago/*
+lib/phpseclib/*
+lib/Unserialize/*
+lib/Varien/*
+lib/Zend/*
+lib/.htaccess
