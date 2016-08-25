@@ -28,11 +28,26 @@ class Magestore_Membership_PlanController extends Mage_Core_Controller_Front_Act
 		 - id: package_id
 	*/
 	public function renewAction()
-    {	
+    {
 		$id = $this->getRequest()->getParam('id');		
 		$package = Mage::getModel('membership/package')->load($id);		
 		// $this->_redirect('checkout/cart/add', array('product'=>$package->getProductId()));		
 		$block = Mage::getBlockSingleton('catalog/product_list');
 		$this->_redirectUrl($block->getAddToCartUrl(Mage::getModel('catalog/product')->load($package->getProductId())));
     }//end renewAction
+	
+	public function autoRenewAction(){
+		$param = $this->getRequest()->getPost();
+		if (isset($param['package'])) {
+			foreach ( $param['package'] as $value){		
+				$package = Mage::getModel('membership/memberpackage')->load($value);               	
+				$package->setAutoRenew('0');		
+				$package->save();						         	
+			}
+			Mage::getSingleton('core/session')->addSuccess(Mage::helper('membership')->__('Cancel auto renew membership successfully.'));			
+		}else{
+			Mage::getSingleton('core/session')->addError(Mage::helper('membership')->__('No items membership were selected'));
+		}		
+		$this->_redirect('*/*/index');
+	}
 }

@@ -70,6 +70,10 @@ class Magestore_Membership_Block_Plan extends Mage_Core_Block_Template {
     public function getRenewUrl($id) {
         return $this->getUrl('membership/plan/renew', array('id' => $id));
     }
+	
+	public function getAutoRenew() {		 
+		 return $this->getUrl('membership/plan/autoRenew');
+	 }
 
     public function getViewUrl($package_id) {
         return $this->getUrl('membership/package/view', array('id' => $package_id));
@@ -115,5 +119,5 @@ class Magestore_Membership_Block_Plan extends Mage_Core_Block_Template {
     public function getOrderStatus($orderId) {
         return Mage::getModel('sales/order')->load($orderId)->getStatus();
     }
-
+	
 }
