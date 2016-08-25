@@ -62,6 +62,10 @@ class Magestore_Customercredit_Model_Transaction extends Mage_Core_Model_Abstrac
             $received_credit = ($amount_credit > 0) ? $amount_credit : -$amount_credit;
         }
 
+        if ($transaction_type_id == Magestore_Customercredit_Model_TransactionType::TYPE_RENEW_MEMBERSHIP_PACKAGE) {
+            $amount_credit = ($amount_credit < 0) ? $amount_credit : -$amount_credit;
+        }
+
         $begin_balance = $customer->getCreditValue();
         $end_balance = $begin_balance + $amount_credit;
         if ($end_balance < 0) {

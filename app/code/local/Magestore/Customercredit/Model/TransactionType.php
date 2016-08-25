@@ -40,5 +40,6 @@ class Magestore_Customercredit_Model_TransactionType extends Varien_Object
     const TYPE_BUY_CREDIT = 8;
     const TYPE_CANCEL_ORDER = 9;
     const TYPE_REFUND_CREDIT_PRODUCT = 10;
+    const TYPE_RENEW_MEMBERSHIP_PACKAGE = 11;
 
 }
