@@ -48,7 +48,9 @@ $member_packages = $this->getMemberPackages();
 				<td><?php if($member_package->getAutoRenew()== 1){ echo $this->__('Yes'); }else {echo $this->__('No');}?></td>
             </tr>
             <?php }?>			
-		<input type="submit"  value="Cancel Auto Renew"></input>      
+		<div >
+            <button style="background-color:#94c651; margin-bottom: 10px;" class="button" title="Cancel" type="submit"><span><span><?php echo $this->__('Cancel Auto Renew') ?></span></span></button>
+        </div>    
 		</tbody>
     </table>
 	</div>
