@@ -35,6 +35,16 @@
                             <show_in_store>1</show_in_store>
                             <comment></comment>
                         </active_package_when_state_order>
+                        <renew_package_when_package_expires translate="label">
+                            <label>Auto renew membership package when expires</label>
+                            <frontend_type>select</frontend_type>
+                            <source_model>membership/statusautorenew</source_model>
+                            <sort_order>1</sort_order>
+                            <show_in_default>1</show_in_default>
+                            <show_in_website>1</show_in_website>
+                            <show_in_store>1</show_in_store>
+                            <comment></comment>
+                        </renew_package_when_package_expires>
                         <update_package_when_state_order translate="label">
                             <label>Update membership package of member when order status is</label>
                             <frontend_type>select</frontend_type>

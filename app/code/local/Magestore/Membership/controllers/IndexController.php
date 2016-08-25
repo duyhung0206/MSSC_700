@@ -32,28 +32,6 @@ class Magestore_Membership_IndexController extends Mage_Core_Controller_Front_Ac
         $this->renderLayout();
     }
 
-    public function testAction() {
-        $entityType = Mage::getSingleton('eav/entity_type')->loadByCode('catalog_product');
-        $entityTypeId = $entityType->getId();
-
-        $attributeSetName = 'Membership';
-        $defaultSetId = Mage::getResourceModel('catalog/setup', 'core_setup')->getAttributeSetId($entityTypeId, 'Default');
-
-        $model = Mage::getModel('eav/entity_attribute_set')->load($attributeSetName, 'attribute_set_name')
-            ->setEntityTypeId($entityTypeId)
-            ->setAttributeSetName($attributeSetName);
-        try {
-            $model->save();
-        } catch (Mage_Core_Exception $e) {
-            
-        } catch (Exception $e) {
-            
-        }
-
-        $model = Mage::getModel('eav/entity_attribute_set')->load($model->getId());
-        $model = $model->initFromSkeleton($defaultSetId)->save();
-    }
-
     public function addToCartUrlAction() {
         $productId = $this->getRequest()->getParam('productId');
         if (Mage::getSingleton('customer/session')->isLoggedIn()) {
