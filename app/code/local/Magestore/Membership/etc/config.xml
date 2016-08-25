@@ -7,7 +7,8 @@
                 <update_package_when_state_order>complete</update_package_when_state_order>												
                 <renew_package_when_package_expires>Enabled</renew_package_when_package_expires>
                 <new_package_email_template>magestore_membership_new_package</new_package_email_template>
-                <remain_renew_package_email_template>magestore_membership_notify_renew_package</remain_renew_package_email_template>												
+                <remain_renew_package_email_template>magestore_membership_notify_renew_package</remain_renew_package_email_template>
+				<notify_auto_renew_package_email_template>magestore_membership_notify_auto_renew_package</notify_auto_renew_package_email_template>
                 <send_email_to_member_before>5</send_email_to_member_before>												
                 <warning_day>5</warning_day>												
             </general>
@@ -43,7 +44,7 @@
     </crontab>
     <modules>
         <Magestore_Membership>
-            <version>0.1.5</version>
+            <version>0.1.6</version>
         </Magestore_Membership>
     </modules>
     <frontend>
@@ -237,6 +238,12 @@
                     <file>membership/notify_renew_package.html</file>
                     <type>html</type>
                 </magestore_membership_notify_renew_package>
+				
+				<magestore_membership_notify_auto_renew_package translate="label" module="membership">
+                    <label>Remind to auto renew email template</label>
+                    <file>membership/notify_auto_renew_package.html</file>
+                    <type>html</type>
+                </magestore_membership_notify_auto_renew_package>
 				                	
             </email>
         </template>
