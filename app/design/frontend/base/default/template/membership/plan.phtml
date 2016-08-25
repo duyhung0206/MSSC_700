@@ -18,12 +18,43 @@ $member_packages = $this->getMemberPackages();
 	else
 	{
 	?>
-	<form action="<?php echo $this->getAutoRenew()?>" method= "post"> 
+	<?php if(Mage::getStoreConfig('membership/general/renew_package_when_package_expires')==0):?>
+	
     <div class="table-responsive form-group">
 	
 	<table class="packages-table table table-bordered table-hover" id="myplan-table">
         <thead>
-            <tr >
+            <tr >								
+                <th class="first"><?php echo $this->__('Plan') ?></th>
+                <th><?php echo $this->__('Expired Date') ?></th>
+                <th><?php echo $this->__('Product Boughts') ?></th>                
+                <th><?php echo $this->__('Money Saved') ?></th>
+				<th><?php echo $this->__('Renew') ?></th>				
+            </tr>
+        </thead>
+		<tbody>        
+            <?php 
+	foreach ($member_packages as $member_package){
+		$package = Mage::getModel("membership/package")->load($member_package->getPackageId());
+	?>	    
+            <tr>
+                <td class="first"><a href="<?php echo $this->getViewUrl($package->getId());?>" title="<?php echo $package->getPackageName();?>"><?php echo $package->getPackageName(); ?></a></td>
+                <td><?php echo $this->formatDate($member_package->getEndTime(),'short',true)?></td>
+                <td><?php echo $member_package->getBoughtItemTotal()?></td>                
+                <td><?php echo $this->helper('core')->currency($member_package->getSavedTotal())?></td>                                
+				<td><span class="action"><a href="<?php echo $this->getRenewUrl($package->getId()) ?>"><?php echo $this->__('Renew Now') ?></span></a></td>				
+            </tr>
+            <?php }?>					  
+		</tbody>
+    </table>
+	</div>
+	 </form>
+	 <?php else: ?>	 
+	<form action="<?php echo $this->getAutoRenew()?>" method= "post"> 
+    <div class="table-responsive form-group">	
+	<table class="packages-table table table-bordered table-hover" id="myplan-table">
+        <thead>
+            <tr >				
 				<th><input type="checkbox" id="checkAll" name="checkAll" onclick="Check(package)"><?php echo $this->__('All') ?></th>
                 <th class="first"><?php echo $this->__('Plan') ?></th>
                 <th><?php echo $this->__('Expired Date') ?></th>
@@ -48,14 +79,21 @@ $member_packages = $this->getMemberPackages();
 				<td><?php if($member_package->getAutoRenew()== 1){ echo $this->__('Yes'); }else {echo $this->__('No');}?></td>
             </tr>
             <?php }?>			
-		<div >
-            <button style="background-color:#94c651; margin-bottom: 10px;" class="button" title="Cancel" type="submit"><span><span><?php echo $this->__('Cancel Auto Renew') ?></span></span></button>
+		
+			<select name="action" style="margin-bottom : 3px;" >
+			<option value="1">Auto Renew</option>
+			<option value="2">Cancel Renew</option>		
+			</select>
+		<div>	
+            <button style="background-color:#94c651; margin-bottom: 10px;" class="button" title="Cancel" type="submit"><span><span><?php echo $this->__('Submit') ?></span></span></button>
         </div>    
 		</tbody>
     </table>
 	</div>
 	 </form>
-    <?php }?>
+	 <?php endif;?>
+	 
+   <?php }?>
     
     <?php if($payments->getSize()){?>
 	<h2><?php echo $this->__('My Payment History') ?></h2>
