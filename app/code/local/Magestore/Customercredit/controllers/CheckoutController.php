@@ -33,11 +33,11 @@ class Magestore_Customercredit_CheckoutController extends Mage_Core_Controller_F
     /**
      * change use customer credit to spend
      */
-    // public function setAmountPostAction()
-    // {
-        // $request = $this->getRequest();
-        // $session = Mage::getSingleton('checkout/session');
-        // if ($request->isPost()) {
+    public function setAmountPostAction()
+    {
+        $request = $this->getRequest();
+        $session = Mage::getSingleton('checkout/session');
+        if ($request->isPost()) {
 
             if (is_numeric($request->getParam('customer_credit')) && Mage::helper('customercredit')->getGeneralConfig('enable')) {
                 $credit_amount = $request->getParam('customer_credit');
