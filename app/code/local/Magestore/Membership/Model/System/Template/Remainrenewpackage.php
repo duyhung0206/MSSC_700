@@ -16,7 +16,7 @@ class Magestore_Membership_Model_System_Template_Remainrenewpackage
         array_unshift(
             $options,
             array(
-                'value'=> 'magestore_membership_remain_renew_package',
+                'value'=> 'magestore_membership_notify_renew_package',
                 'label' => 'Renew package email template (Default)'
             )
         );		

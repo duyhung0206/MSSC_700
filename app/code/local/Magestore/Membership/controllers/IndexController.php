@@ -14,79 +14,79 @@ class Magestore_Membership_IndexController extends Mage_Core_Controller_Front_Ac
 //               continue;
 //            }
             //check config auto renew
-            if (!$member_package->getAutoRenew()) {
-                continue;
-            }
-            $member_id = $member_package->getMemberId();
-            $customer_id = Mage::getModel('membership/member')->load($member_id)->getCustomerId();
-            $customer = Mage::getModel('customer/customer')->load($customer_id);
-
-            //check credit
-            $package = Mage::getModel('membership/package')->load($member_package->getPackageId());
-            $product = Mage::getModel('catalog/product')->load($package->getProductId());
-
-            //check credit
-            if ($customer->getCreditValue()<$package->getPackagePrice()) {
-                continue;
-            }
-            require_once 'app/Mage.php';
-            Mage::app();
-
-            $storeId = $customer->getStoreId();
-            $quote = Mage::getModel('sales/quote')->setStoreId($storeId);
-            $quote->assignCustomer($customer);
-
-
-            $params['qty'] = 1;
-            $request = new Varien_Object();
-            $request->setData($params);
-            // add product(s)
-            $quote->addProduct($product, $request);
-
-            $billingAddress = $quote->getBillingAddress()->addData($customer->getPrimaryBillingAddress());
-
-            //create method payment
-            $quote->getPayment()->setMethod('cashondelivery');
-
-            $quote->collectTotals()->save();
-
-            $service = Mage::getModel('sales/service_quote', $quote);
-            $service->submitAll();
-            //Create invoice for order (change status = complete)
-            $order = $service->getOrder();
-            $order = Mage::getModel('sales/order')
-                ->load($order->getId());
-
-            //Add transaction history customer credit
-            Mage::getModel('customercredit/transaction')->addTransactionHistory($customer_id,
-                Magestore_Customercredit_Model_TransactionType::TYPE_RENEW_MEMBERSHIP_PACKAGE,
-                Mage::helper('customercredit')->__('auto renew membership package #').$package->getPackageName().Mage::helper('customercredit')->__(' in order #'). $order->getIncrementId().'</a>' ,
-                $order->getId(),
-                -$order->getGrandTotal());
-            //Sub customer credit
-            Mage::getModel('customercredit/customercredit')->changeCustomerCredit(-$order->getGrandTotal());
-
-            $invoice = $order->prepareInvoice()
-                ->setTransactionId($order->getId())
-                ->addComment("Auto renew membership package by storecredit")
-                ->register()
-                ->pay();
-
-            $transaction_save = Mage::getModel('core/resource_transaction')
-                ->addObject($invoice)
-                ->addObject($invoice->getOrder());
-
-            $transaction_save->save();
-            //Use credit to pay for order
-            $order->setCustomercreditDiscount($order->getGrandTotal());
-            $order->setCustomercreditDiscountcription('Customer credit');
-            $order->setBaseTotalPaid(0);
-            $order->setTotalPaid(0);
-            $order->setGrandTotal(0);
-            $order->setBaseGrandTotal(0);
-            $order->save();
+//            if (!$member_package->getAutoRenew()) {
+//                continue;
+//            }
+//            $member_id = $member_package->getMemberId();
+//            $customer_id = Mage::getModel('membership/member')->load($member_id)->getCustomerId();
+//            $customer = Mage::getModel('customer/customer')->load($customer_id);
+//
+//            //check credit
+//            $package = Mage::getModel('membership/package')->load($member_package->getPackageId());
+//            $product = Mage::getModel('catalog/product')->load($package->getProductId());
+//
+//            //check credit
+//            if ($customer->getCreditValue()<$package->getPackagePrice()) {
+//                continue;
+//            }
+//            require_once 'app/Mage.php';
+//            Mage::app();
+//
+//            $storeId = $customer->getStoreId();
+//            $quote = Mage::getModel('sales/quote')->setStoreId($storeId);
+//            $quote->assignCustomer($customer);
+//
+//
+//            $params['qty'] = 1;
+//            $request = new Varien_Object();
+//            $request->setData($params);
+//            // add product(s)
+//            $quote->addProduct($product, $request);
+//
+//            $billingAddress = $quote->getBillingAddress()->addData($customer->getPrimaryBillingAddress());
+//
+//            //create method payment
+//            $quote->getPayment()->setMethod('cashondelivery');
+//
+//            $quote->collectTotals()->save();
+//
+//            $service = Mage::getModel('sales/service_quote', $quote);
+//            $service->submitAll();
+//            //Create invoice for order (change status = complete)
+//            $order = $service->getOrder();
+//            $order = Mage::getModel('sales/order')
+//                ->load($order->getId());
+//
+//            //Add transaction history customer credit
+//            Mage::getModel('customercredit/transaction')->addTransactionHistory($customer_id,
+//                Magestore_Customercredit_Model_TransactionType::TYPE_RENEW_MEMBERSHIP_PACKAGE,
+//                Mage::helper('customercredit')->__('auto renew membership package #').$package->getPackageName().Mage::helper('customercredit')->__(' in order #'). $order->getIncrementId().'</a>' ,
+//                $order->getId(),
+//                -$order->getGrandTotal());
+//            //Sub customer credit
+//            Mage::getModel('customercredit/customercredit')->changeCustomerCredit(-$order->getGrandTotal());
+//
+//            $invoice = $order->prepareInvoice()
+//                ->setTransactionId($order->getId())
+//                ->addComment("Auto renew membership package by storecredit")
+//                ->register()
+//                ->pay();
+//
+//            $transaction_save = Mage::getModel('core/resource_transaction')
+//                ->addObject($invoice)
+//                ->addObject($invoice->getOrder());
+//
+//            $transaction_save->save();
+//            //Use credit to pay for order
+//            $order->setCustomercreditDiscount($order->getGrandTotal());
+//            $order->setCustomercreditDiscountcription('Customer credit');
+//            $order->setBaseTotalPaid(0);
+//            $order->setTotalPaid(0);
+//            $order->setGrandTotal(0);
+//            $order->setBaseGrandTotal(0);
+//            $order->save();
             //Send mail
-            Mage::helper('membership/email')->sendEmailNotifyAutoRenewPackage($member_package);
+            Mage::helper('membership/email')->sendEmailNotifyRenewPackage($member_package);
         }
     }
 
