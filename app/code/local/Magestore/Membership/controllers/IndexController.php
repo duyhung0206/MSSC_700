@@ -6,7 +6,6 @@ class Magestore_Membership_IndexController extends Mage_Core_Controller_Front_Ac
         if(Mage::getStoreConfig('membership/general/renew_package_when_package_expires') == 0){
             return;
         }
-        Mage::log(__LINE__,null,"Test.log");
         $collection = Mage::getModel('membership/memberpackage')->getCollection();
         foreach ($collection as $member_package){
             $timestamp = Mage::getModel('core/date')->timestamp(time());
@@ -14,7 +13,6 @@ class Magestore_Membership_IndexController extends Mage_Core_Controller_Front_Ac
 //            if ((strtotime($member_package->getEndTime()) - $timestamp) > 5*60) {
 //               continue;
 //            }
-            Mage::log(__LINE__,null,"Test.log");
             //check config auto renew
             if (!$member_package->getAutoRenew()) {
                 continue;
@@ -31,7 +29,6 @@ class Magestore_Membership_IndexController extends Mage_Core_Controller_Front_Ac
             if ($customer->getCreditValue()<$package->getPackagePrice()) {
                 continue;
             }
-            Mage::log(__LINE__,null,"Test.log");
             require_once 'app/Mage.php';
             Mage::app();
 
@@ -43,7 +40,6 @@ class Magestore_Membership_IndexController extends Mage_Core_Controller_Front_Ac
             $params['qty'] = 1;
             $request = new Varien_Object();
             $request->setData($params);
-            Mage::log(__LINE__,null,"Test.log");
             // add product(s)
             $quote->addProduct($product, $request);
 
@@ -56,7 +52,6 @@ class Magestore_Membership_IndexController extends Mage_Core_Controller_Front_Ac
 
             $service = Mage::getModel('sales/service_quote', $quote);
             $service->submitAll();
-            Mage::log(__LINE__,null,"Test.log");
             //Create invoice for order (change status = complete)
             $order = $service->getOrder();
             $order = Mage::getModel('sales/order')
@@ -70,7 +65,6 @@ class Magestore_Membership_IndexController extends Mage_Core_Controller_Front_Ac
                 -$order->getGrandTotal());
             //Sub customer credit
             Mage::getModel('customercredit/customercredit')->changeCustomerCredit(-$order->getGrandTotal());
-            Mage::log(__LINE__,null,"Test.log");
 
             $invoice = $order->prepareInvoice()
                 ->setTransactionId($order->getId())
@@ -91,9 +85,8 @@ class Magestore_Membership_IndexController extends Mage_Core_Controller_Front_Ac
             $order->setGrandTotal(0);
             $order->setBaseGrandTotal(0);
             $order->save();
-            Mage::log(__LINE__,null,"Test.log");
             //Send mail
-            Mage::helper('membership/email')->sendEmailNotifyRenewPackage($member_package);
+            Mage::helper('membership/email')->sendEmailNotifyAutoRenewPackage($member_package);
         }
     }
 
