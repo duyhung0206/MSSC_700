@@ -85,7 +85,7 @@ $member_packages = $this->getMemberPackages();
 			<option value="2">Cancel Renew</option>		
 			</select>
 		<div>	
-            <button style="background-color:#94c651; margin-bottom: 10px;" class="button" title="Cancel" type="submit"><span><span><?php echo $this->__('Submit') ?></span></span></button>
+            <button style="background-color:#94c651; margin-bottom: 10px;" class="button" title="Submit" type="submit"><span><span><?php echo $this->__('Submit') ?></span></span></button>
         </div>    
 		</tbody>
     </table>
@@ -113,8 +113,8 @@ $member_packages = $this->getMemberPackages();
             <tr>
                 <td class="first"><?php echo $payment->getPackageName() ?></td>
                 <td><?php echo $this->formatDate($payment->getStartTime(),'short',true)?></td>
-                <td><?php echo $payment->getDuration()?> <?php echo $this->__('month(s)') ?></td>                
-                <td><?php echo $this->helper('core')->currency($payment->getPrice())?></td>                                
+                <td><?php echo $payment->getDuration()?> <?php echo ( $payment->getUnitOfTime(). '' .'(s)' )?> </td>                
+                <td><?php echo $this->helper('core')->currency($payment->getPrice())?></td>                               
 				<td><?php echo $this->getOrderStatus($payment->getOrderId())?></td>
             </tr>
             <?php }?>
