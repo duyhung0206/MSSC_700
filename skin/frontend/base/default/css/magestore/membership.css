@@ -187,3 +187,24 @@
 	text-align:left;
 	vertical-align:middle;
 }
+
+.td_input_checkbox{
+    text-align: center;
+}
+#change_status_auto_renew{
+    top: 86px;
+    position: absolute;
+    right: 31px;
+}
+
+#change_status_auto_renew>select{
+    margin: 0px 10px;
+    padding: 5px;
+}
+#change_status_auto_renew>button{
+    background-color:#94c651;
+    float: right;
+    font-size: 13px;
+    border-radius: 3px;
+    text-decoration: none;
+}
