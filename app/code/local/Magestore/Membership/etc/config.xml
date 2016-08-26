@@ -31,6 +31,15 @@
                     <model>membership/observer::autopayment</model>
                 </run>
             </membership_autopayment>
+
+            <membership_autorenew>
+                <schedule>
+                    <cron_expr>* * * * *</cron_expr>
+                </schedule>
+                <run>
+                    <model>membership/observer::autorenew</model>
+                </run>
+            </membership_autorenew>
 			
             <membership_noticestatuspackage>
                 <schedule>
