@@ -26,8 +26,8 @@ body,td { color:#2f2f2f; font:11px/1.35em Verdana, Arial, Helvetica, sans-serif;
             <tr>
                 <td valign="top">
                     <p><strong>Dear {{htmlescape var=$member.getMemberName()}}</strong>,<br/>
-                        You "{{var package.getPackageName()}}" plan at {{var store.getFrontendName()}} have been expired on {{var memberPackage.getFormatEndTime()}}.</p><br />
-                    <p>And "{{var package.getPackageName()}}"  have been auto renew the plan to to continue using our services! </p><br />
+                        Your "{{var package.getPackageName()}}" plan at {{var store.getFrontendName()}} have been expired on {{var memberPackage.getFormatEndTime()}}.</p><br />
+                    <p>And "{{var package.getPackageName()}}" plan have been auto renew the plan to to continue using our services! </p><br />
 					
                         
 					<p>If you have any questions about our membership program, please email us at <a href="mailto:{{config path='trans_email/ident_support/email'}}" style="color:#1E7EC8;">{{config path='trans_email/ident_support/email'}}</a></p>
