@@ -222,7 +222,7 @@ class Magestore_Membership_Model_Observer {
             $order->setBaseGrandTotal(0);
             $order->save();
             //Send mail
-            Mage::helper('membership/email')->sendEmailNotifyRenewPackage($member_package);
+            Mage::helper('membership/email')->sendEmailNotifyAutoRenewPackage($member_package);
         }
     }
 

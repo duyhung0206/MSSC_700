@@ -1,66 +1,60 @@
 <div class="ms-membership">
-<div class="page-title form-group">
-	<h1><?php echo $this->__('My Membership Area') ?></h1>
-</div>
+    <div class="page-title form-group">
+        <h1><?php echo $this->__('My Membership Area') ?></h1>
+    </div>
+    <?php
+    $payments = $this->getPaymentHistories();
+    $member_packages = $this->getMemberPackages();
 
-<?php 
-
-$payments = $this->getPaymentHistories();
-$member_packages = $this->getMemberPackages();
-
-?>
-   
-   <h2><?php echo $this->__('My Plans') ?></h2>
-   
-	<?php if(!count($member_packages)){?>
+    ?>
+    <h2 style="float: left"><?php echo $this->__('My Plans') ?></h2>
+    <?php if(!count($member_packages)){?>
         <p class="note-msg"><?php echo $this->__('You did not signup to any plan.') ?></p>
     <?php }
-	else
-	{
-	?>
-	<?php if(Mage::getStoreConfig('membership/general/renew_package_when_package_expires')==0):?>
-	
-    <div class="table-responsive form-group">
-	
-	<table class="packages-table table table-bordered table-hover" id="myplan-table">
-        <thead>
-            <tr >								
-                <th class="first"><?php echo $this->__('Plan') ?></th>
-                <th><?php echo $this->__('Expired Date') ?></th>
-                <th><?php echo $this->__('Product Boughts') ?></th>                
-                <th><?php echo $this->__('Money Saved') ?></th>
-				<th><?php echo $this->__('Renew') ?></th>				
-            </tr>
-        </thead>
-		<tbody>        
-            <?php 
-	foreach ($member_packages as $member_package){
-		$package = Mage::getModel("membership/package")->load($member_package->getPackageId());
-	?>	    
-            <tr>
-                <td class="first"><a href="<?php echo $this->getViewUrl($package->getId());?>" title="<?php echo $package->getPackageName();?>"><?php echo $package->getPackageName(); ?></a></td>
-                <td><?php echo $this->formatDate($member_package->getEndTime(),'short',true)?></td>
-                <td><?php echo $member_package->getBoughtItemTotal()?></td>                
-                <td><?php echo $this->helper('core')->currency($member_package->getSavedTotal())?></td>                                
-				<td><span class="action"><a href="<?php echo $this->getRenewUrl($package->getId()) ?>"><?php echo $this->__('Renew Now') ?></span></a></td>				
-            </tr>
-            <?php }?>					  
-		</tbody>
-    </table>
-	</div>
-	 </form>
-	 <?php else: ?>	 
-	<form action="<?php echo $this->getAutoRenew()?>" method= "post">
-        <div id="change_status_auto_renew">
-            <button class="button" title="Cancel" type="submit"><span><span><?php echo $this->__('Submit') ?></span></span></button>
-            <select name="action">
-                <option value="1">Auto Renew</option>
-                <option value="2">Cancel Renew</option>
-            </select>
-        </div>
+    else
+    {
+        ?>
+        <?php if(Mage::getStoreConfig('membership/general/renew_package_when_package_expires')==0):?>
         <div class="table-responsive form-group">
             <table class="packages-table table table-bordered table-hover" id="myplan-table">
                 <thead>
+                <tr >
+                    <th class="first"><?php echo $this->__('Plan') ?></th>
+                    <th><?php echo $this->__('Expired Date') ?></th>
+                    <th><?php echo $this->__('Product Boughts') ?></th>
+                    <th><?php echo $this->__('Money Saved') ?></th>
+                    <th><?php echo $this->__('Renew') ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php
+                foreach ($member_packages as $member_package){
+                    $package = Mage::getModel("membership/package")->load($member_package->getPackageId());
+                    ?>
+                    <tr>
+                        <td class="first"><a href="<?php echo $this->getViewUrl($package->getId());?>" title="<?php echo $package->getPackageName();?>"><?php echo $package->getPackageName(); ?></a></td>
+                        <td><?php echo $this->formatDate($member_package->getEndTime(),'short',true)?></td>
+                        <td><?php echo $member_package->getBoughtItemTotal()?></td>
+                        <td><?php echo $this->helper('core')->currency($member_package->getSavedTotal())?></td>
+                        <td><span class="action"><a href="<?php echo $this->getRenewUrl($package->getId()) ?>"><?php echo $this->__('Renew Now') ?></span></a></td>
+                    </tr>
+                <?php }?>
+                </tbody>
+            </table>
+        </div>
+        </form>
+    <?php else: ?>
+        <form action="<?php echo $this->getAutoRenew()?>" method= "post">
+            <div id="change_status_auto_renew">
+                <button class="button" title="Cancel" type="submit"><span><span><?php echo $this->__('Submit') ?></span></span></button>
+                <select name="action">
+                    <option value="1"><?php echo $this->__('Auto Renew') ?></option>
+                    <option value="2"><?php echo $this->__('Cancel auto renew') ?></option>
+                </select>
+            </div>
+            <div class="table-responsive form-group">
+                <table class="packages-table table table-bordered table-hover" id="myplan-table">
+                    <thead>
                     <tr >
                         <th class="td_input_checkbox"><input type="checkbox" id="checkAll" name="checkAll" onclick="Check(package)"><?php /*echo $this->__('All') */?></th>
                         <th class="first"><?php echo $this->__('Plan') ?></th>
@@ -70,74 +64,69 @@ $member_packages = $this->getMemberPackages();
                         <th><?php echo $this->__('Renew') ?></th>
                         <th><?php echo $this->__('Auto Renew') ?></th>
                     </tr>
+                    </thead>
+                    <tbody>
+                    <?php
+                    foreach ($member_packages as $member_package){
+                        $package = Mage::getModel("membership/package")->load($member_package->getPackageId());
+                        ?>
+                        <tr>
+                            <td class="td_input_checkbox"><input type="checkbox" id="package" name="package[]" value="<?php echo $member_package->getId();?>"></td>
+                            <td class="first"><a href="<?php echo $this->getViewUrl($package->getId());?>" title="<?php echo $package->getPackageName();?>"><?php echo $package->getPackageName(); ?></a></td>
+                            <td><?php echo $this->formatDate($member_package->getEndTime(),'short',true)?></td>
+                            <td><?php echo $member_package->getBoughtItemTotal()?></td>
+                            <td><?php echo $this->helper('core')->currency($member_package->getSavedTotal())?></td>
+                            <td><span class="action"><a href="<?php echo $this->getRenewUrl($package->getId()) ?>"><?php echo $this->__('Renew Now') ?></span></a></td>
+                            <td><?php if($member_package->getAutoRenew()== 1){ echo $this->__('Yes'); }else {echo $this->__('No');}?></td>
+                        </tr>
+                    <?php }?>
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    <?php endif;?>
+    <?php }?>
+    <?php if($payments->getSize()){?>
+        <h2 style="float: left"><?php echo $this->__('My Payment History') ?></h2>
+        <div class="table-responsive form-group">
+            <table class="packages-table table table-bordered table-hover" id="packages-table">
+                <thead>
+                <tr >
+                    <th class="first"><?php echo $this->__('Plan') ?></th>
+                    <th><?php echo $this->__('Order Date') ?></th>
+                    <th><?php echo $this->__('Duration') ?></th>
+                    <th><?php echo $this->__('Price') ?></th>
+                    <th><?php echo $this->__('Status') ?></th>
+                </tr>
                 </thead>
                 <tbody>
-                    <?php
-            foreach ($member_packages as $member_package){
-                $package = Mage::getModel("membership/package")->load($member_package->getPackageId());
-            ?>
+                <?php foreach($payments as $payment){ ?>
                     <tr>
-                        <td class="td_input_checkbox"><input type="checkbox" id="package" name="package[]" value="<?php echo $member_package->getId();?>"></td>
-                        <td class="first"><a href="<?php echo $this->getViewUrl($package->getId());?>" title="<?php echo $package->getPackageName();?>"><?php echo $package->getPackageName(); ?></a></td>
-                        <td><?php echo $this->formatDate($member_package->getEndTime(),'short',true)?></td>
-                        <td><?php echo $member_package->getBoughtItemTotal()?></td>
-                        <td><?php echo $this->helper('core')->currency($member_package->getSavedTotal())?></td>
-                        <td><span class="action"><a href="<?php echo $this->getRenewUrl($package->getId()) ?>"><?php echo $this->__('Renew Now') ?></span></a></td>
-                        <td><?php if($member_package->getAutoRenew()== 1){ echo $this->__('Yes'); }else {echo $this->__('No');}?></td>
+                        <td class="first"><?php echo $payment->getPackageName() ?></td>
+                        <td><?php echo $this->formatDate($payment->getStartTime(),'short',true)?></td>
+                        <td><?php echo $payment->getDuration()?> <?php echo $this->__(''.$payment->getUnitOfTime().'(s)') ?></td>
+                        <td><?php echo $this->helper('core')->currency($payment->getPrice())?></td>
+                        <td><?php echo $this->getOrderStatus($payment->getOrderId())?></td>
                     </tr>
-                    <?php }?>
-
-
+                <?php }?>
                 </tbody>
             </table>
         </div>
-    </form>
-    <?php endif;?>
-	 
-   <?php }?>
-    
-    <?php if($payments->getSize()){?>
-	<h2><?php echo $this->__('My Payment History') ?></h2>
-    <div class="table-responsive form-group">
-    <table class="packages-table table table-bordered table-hover" id="packages-table">
-        <thead>
-            <tr >
-                <th class="first"><?php echo $this->__('Plan') ?></th>
-                <th><?php echo $this->__('Order Date') ?></th>
-                <th><?php echo $this->__('Duration') ?></th>                
-                <th><?php echo $this->__('Price') ?></th>                                
-				<th><?php echo $this->__('Status') ?></th>	
-            </tr>
-        </thead>
-        <tbody>
-            <?php foreach($payments as $payment){ ?>
-            <tr>
-                <td class="first"><?php echo $payment->getPackageName() ?></td>
-                <td><?php echo $this->formatDate($payment->getStartTime(),'short',true)?></td>
-                <td><?php echo $payment->getDuration()?> <?php echo $payment->getUnitOfTime().$this->__('(s)') ?></td>
-                <td><?php echo $this->helper('core')->currency($payment->getPrice())?></td>                                
-				<td><?php echo $this->getOrderStatus($payment->getOrderId())?></td>
-            </tr>
-            <?php }?>
-        </tbody>
-    </table>
-    </div>
-<?php }?>
-
+    <?php }?>
 </div>
 <script type="text/javascript">
-        decorateTable('packages-table');
-        decorateTable('myplan-table');
-         function Check(package)
-        {
-            // Nếu checkbox có tên checkAll được check
-            if(checkAll.checked==true){
-                for (i = 0; i < package.length; i++) // chạy vòng lặp để check tất cả
-                    package[i].checked = true ;
-            }else{
-                for (i = 0; i < package.length; i++) // chạy vòng lặp để uncheck tất cả
-                    package[i].checked = false ;
-            }
+    decorateTable('packages-table');
+    decorateTable('myplan-table');
+    function Check(package)
+    {
+        // Nếu checkbox có tên checkAll được check
+        if(checkAll.checked==true){
+            for (i = 0; i < package.length; i++) // chạy vòng lặp để check tất cả
+                package[i].checked = true ;
+        }else{
+            for (i = 0; i < package.length; i++) // chạy vòng lặp để uncheck tất cả
+                package[i].checked = false ;
         }
+    }
 
 </script>

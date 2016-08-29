@@ -192,9 +192,9 @@
     text-align: center;
 }
 #change_status_auto_renew{
-    top: 86px;
-    position: absolute;
-    right: 31px;
+    display: table-cell;
+    float: right;
+    margin-bottom: 5px;
 }
 
 #change_status_auto_renew>select{
