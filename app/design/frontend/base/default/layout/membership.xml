@@ -20,6 +20,13 @@
             </action>
         </reference>
     </default>
+
+    <membership_index_blockaccount>
+        <reference name="content">
+            <block type="membership/membership" name="membership.blockaccount" template="membership/blockaccount.phtml"/>
+        </reference>
+    </membership_index_blockaccount>
+
     <membership_index_index>
         <reference name="root">
             <action method="setTemplate">

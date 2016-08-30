@@ -4,9 +4,9 @@ $installer->startSetup();
 $setup = new Mage_Eav_Model_Entity_Setup('core_setup');
 /* Add credit value attribute */
 $data = array(
-    'type' => 'int',
+    'type' => 'varchar',
     'input' => 'text',
-    'label' => 'Block account',
+    'label' => 'Message block',
     'backend' => '',
     'frontend' => '',
     'source' => '',
@@ -19,12 +19,12 @@ $data = array(
     'is_comparable' => 0,
     'position' => 2,
     'unique' => 0,
-    'default' => 0,
+    'default' => "",
     'is_global' => '',
 );
-$setup->addAttribute('customer', 'block_account', $data);
-$attribute = Mage::getSingleton('eav/config')->getAttribute('customer', 'block_account');
-$attribute->setDefaultValue('0');
+$setup->addAttribute('customer', 'message_block', $data);
+$attribute = Mage::getSingleton('eav/config')->getAttribute('customer', 'message_block');
+$attribute->setDefaultValue("");
 $attribute->save();
 $installer->endSetup();
 

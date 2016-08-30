@@ -1,0 +1,22 @@
+<?php if($this->isBlock()):?>
+<div class="page-title">
+    <h1>Your account was block</h1>
+</div>
+<p>
+    <?php echo $this->getMessageBlock()?>
+</p>
+
+<?php else:?>
+    <div class="page-title">
+        <h1>Not found</h1>
+    </div>
+<?php endif;?>
+<script>
+    console.log($$('div.breadcrumbs'));
+    $$('div.breadcrumbs')[0].hide();
+</script>
+<style>
+    .col-main{
+        float: left !important;
+    }
+</style>

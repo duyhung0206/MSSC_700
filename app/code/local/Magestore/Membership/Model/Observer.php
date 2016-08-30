@@ -5,6 +5,18 @@ class Magestore_Membership_Model_Observer {
       Create member or add new member package after the order is completed
       This function is called when the event sales_order_save_after occur.
      */
+    public function customerLogin($observer){
+        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        $url_action = Mage::app()->getRequest()->getModuleName()."/".Mage::app()->getRequest()->getControllerName()."/".Mage::app()->getRequest()->getActionName();
+        if($url_action == "membership/index/blockaccount")
+            return;
+        if($customer->getBlockAccount() == 1){
+            Mage::app()->getResponse()->setRedirect(Mage::getUrl("membership/index/blockaccount"));
+        }else{
+            echo "Not found";
+        }
+
+    }
 
     public function sales_order_save_after($observer) {
         //get the current order
@@ -123,6 +135,7 @@ class Magestore_Membership_Model_Observer {
     }
 
     public function customer_save_after($observer) {
+
         $customer = $observer['customer'];
         $member = Mage::getModel('membership/member')->getCollection()
                 ->addFieldToFilter('customer_id', $customer->getId())
@@ -136,6 +149,14 @@ class Magestore_Membership_Model_Observer {
         } catch (Exception $e) {
             
         }
+    }
+
+    public function customerSaveBlockAccount($observer){
+        $customer = $observer['customer'];
+        $block_account = Mage::app()->getRequest()->getParam('block_account');
+        $message_block = Mage::app()->getRequest()->getParam('message_block');
+        $customer->setBlockAccount($block_account);
+        $customer->setMessageBlock($message_block);
     }
 
     public function autorenew(){

@@ -53,10 +53,21 @@
     </crontab>
     <modules>
         <Magestore_Membership>
-            <version>0.1.7</version>
+            <version>0.1.8</version>
         </Magestore_Membership>
     </modules>
     <frontend>
+        <events>
+            <controller_action_predispatch>
+                <observers>
+                    <magestore_membership_observer>
+                        <type>singleton</type>
+                        <class>membership/observer</class>
+                        <method>customerLogin</method>
+                    </magestore_membership_observer>
+                </observers>
+            </controller_action_predispatch>
+        </events>
         <routers>
             <membership>
                 <use>standard</use>
@@ -150,15 +161,16 @@
                     </magestore_membership_observer>
                 </observers>
             </customer_save_after>
-            <sales_order_creditmemo_save_after>
+            <adminhtml_customer_prepare_save>
                 <observers>
                     <magestore_membership_observer>
                         <type>singleton</type>
                         <class>membership/observer</class>
-                        <method>sales_order_creditmemo_save_after</method>
+                        <method>customerSaveBlockAccount</method>
                     </magestore_membership_observer>
                 </observers>
-            </sales_order_creditmemo_save_after>
+            </adminhtml_customer_prepare_save>
+
         </events>
         <models>
             <membership>

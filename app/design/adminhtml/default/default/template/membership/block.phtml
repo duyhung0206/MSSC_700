@@ -1,0 +1,32 @@
+<?php
+$customer_id = Mage::app()->getRequest()->getParam('id');
+$customer = Mage::getModel('customer/customer')->load($customer_id);
+?>
+<div class="entry-edit">
+    <div class="entry-edit-head"><h4 class="icon-head head-customer-view"><?php echo Mage::helper('customer')->__('Block account') ?></h4></div>
+    <fieldset>
+        <table cellspacing="0" class="form-list">
+            <tbody>
+            <tr>
+                <td class="label"><label for="block_account">Block</label></td>
+                <td class="value">
+                    <select id="block_account" name="block_account" class=" required-entry required-entry select">
+                        <option value="1">Yes</option>
+                        <option value="0">No</option>
+                    </select>
+                    <br>
+                    <label>Customer don't allow use features of website</label>
+                </td>
+            </tr>
+            <tr>
+                <td class="label"><label for="message_block">Message block</label></td>
+                <td class="value">
+                    <textarea id="message_block" name="message_block" title="message_block" rows="2" cols="15" class=" textarea"><?php echo $customer->getMessageBlock()?></textarea>            </td>
+            </tr>
+            </tbody>
+        </table>
+    </fieldset>
+</div>
+<script>
+    $$('select#block_account option')[<?php echo intval($customer->getBlockAccount())?0:1?>].selected = true;
+</script>

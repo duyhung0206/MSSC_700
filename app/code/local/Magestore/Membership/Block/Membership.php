@@ -51,4 +51,14 @@ class Magestore_Membership_Block_Membership extends Mage_Core_Block_Template {
         preg_match($regex, $string, $matches);
         return $matches[1].'...';
     }
+
+    public function getMessageBlock() {
+        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        return $customer->getMessageBlock();
+    }
+
+    public function isBlock() {
+        $customer = Mage::getSingleton('customer/session')->getCustomer();
+        return $customer->getBlockAccount();
+    }
 }
