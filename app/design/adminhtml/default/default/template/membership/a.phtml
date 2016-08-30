@@ -1,0 +1,10 @@
+<?php
+$customer_id = Mage::app()->getRequest()->getParam('id');
+$customer = Mage::getModel('customer/customer')->load($customer_id);
+?>
+<div class="entry-edit">
+    <div class="entry-edit-head"><h4 class="icon-head head-customer-view"><?php echo Mage::helper('customer')->__('Personal Information') ?></h4></div>
+    <fieldset>
+        <input type="text" id="block_account" name="block_account" value="<?php echo $customer->getBlockAccount()?>">
+    </fieldset>
+</div>

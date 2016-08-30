@@ -1,5 +1,12 @@
 <?xml version="1.0"?>
 <layout version="0.1.0">
+
+    <adminhtml_customer_edit>
+        <reference name="customer_edit_tab_view">
+            <block type="adminhtml/customer_edit_tab_view" after="sales" name="test" template="membership/a.phtml"></block>
+        </reference>
+    </adminhtml_customer_edit>
+
     <adminhtml_membership_group_index>
         <reference name="content">
             <block type="membership/adminhtml_group" name="group" />
