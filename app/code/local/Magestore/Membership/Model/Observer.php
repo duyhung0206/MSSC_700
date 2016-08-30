@@ -1,10 +1,43 @@
 <?php
 
 class Magestore_Membership_Model_Observer {
-    /*
-      Create member or add new member package after the order is completed
-      This function is called when the event sales_order_save_after occur.
-     */
+
+
+    public function appendCustomColumn(Varien_Event_Observer $observer){
+        $block = $observer->getBlock();
+        if (!isset($block)) {
+            return $this;
+        }
+
+        if ($block->getType() == 'adminhtml/customer_grid') {
+            $block->addColumnAfter('block_account', array(
+                'header'    => 'Is block',
+                'type'      => 'options',
+                'options'     => array(
+                    1 => "Yes",
+                    0 => "No",
+                ),
+                'index'     => 'block_account',
+            ), 'billing_region');
+        }
+    }
+
+    public function addAttribteForCollection(Varien_Event_Observer $observer)
+    {
+        $collection = $observer->getCollection();
+        if (!isset($collection)) {
+            return;
+        }
+        /**
+         * Mage_Customer_Model_Resource_Customer_Collection
+         */
+        if ($collection instanceof Mage_Customer_Model_Resource_Customer_Collection) {
+            /* @var $collection Mage_Customer_Model_Resource_Customer_Collection */
+            $collection->addAttributeToSelect('block_account');;
+        }
+    }
+
+
     public function customerLogin($observer){
         $customer = Mage::getSingleton('customer/session')->getCustomer();
         $url_action = Mage::app()->getRequest()->getModuleName()."/".Mage::app()->getRequest()->getControllerName()."/".Mage::app()->getRequest()->getActionName();
@@ -17,7 +50,10 @@ class Magestore_Membership_Model_Observer {
         }
 
     }
-
+    /*
+          Create member or add new member package after the order is completed
+          This function is called when the event sales_order_save_after occur.
+         */
     public function sales_order_save_after($observer) {
         //get the current order
         $order = $observer->getEvent()->getOrder();

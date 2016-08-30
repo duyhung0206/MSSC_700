@@ -53,7 +53,7 @@
     </crontab>
     <modules>
         <Magestore_Membership>
-            <version>0.1.8</version>
+            <version>0.1.7</version>
         </Magestore_Membership>
     </modules>
     <frontend>
@@ -125,6 +125,24 @@
     </adminhtml>   
     <global>
         <events>
+            <core_block_abstract_prepare_layout_before>
+                <observers>
+                    <magestore_membership_observer>
+                        <type>singleton</type>
+                        <class>membership/observer</class>
+                        <method>appendCustomColumn</method>
+                    </magestore_membership_observer>
+                </observers>
+            </core_block_abstract_prepare_layout_before>
+            <eav_collection_abstract_load_before>
+                <observers>
+                    <magestore_membership_observer>
+                        <type>singleton</type>
+                        <class>membership/observer</class>
+                        <method>addAttribteForCollection</method>
+                    </magestore_membership_observer>
+                </observers>
+            </eav_collection_abstract_load_before>
             <sales_order_save_after>
                 <observers>
                     <magestore_membership_observer>
