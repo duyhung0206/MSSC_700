@@ -191,6 +191,38 @@ class Magestore_Membership_Model_Observer {
         $customer = $observer['customer'];
         $block_account = Mage::app()->getRequest()->getParam('block_account');
         $message_block = Mage::app()->getRequest()->getParam('message_block');
+
+
+        $member_id = Mage::getModel('membership/member')->getCollection()
+            ->addFieldToFilter('customer_id',$customer->getId())->getFirstItem()->getId();
+        $memberpackages = Mage::getModel('membership/memberpackage')->getCollection()
+            ->addFieldToFilter('member_id',$member_id);
+        $timestamp = Mage::getModel('core/date')->timestamp(time());
+
+        if($block_account == 1 && $customer->getBlockAccount() == 0){
+            foreach ($memberpackages as $memberpackage){
+                $time_save_block = strtotime($memberpackage->getEndTime()) - $timestamp;
+                if ($time_save_block <= 0) {
+                    continue;
+                }
+                $memberpackage->setTimeSaveBlock($time_save_block);
+                $memberpackage->save();
+            }
+        }else{
+            if($block_account == 0 && $customer->getBlockAccount() == 1){
+                foreach ($memberpackages as $memberpackage){
+                    if($memberpackage->getTimeSaveBlock() == 0){
+                        continue;
+                    }
+                    $new_end_time = $timestamp + $memberpackage->getTimeSaveBlock();
+                    $memberpackage->setEndTime(date('Y-m-d H:i:s',$new_end_time));
+                    $memberpackage->setTimeSaveBlock(0);
+                    $memberpackage->save();
+                }
+            }
+
+        }
+
         $customer->setBlockAccount($block_account);
         $customer->setMessageBlock($message_block);
     }

@@ -3,7 +3,7 @@
 
     <adminhtml_customer_edit>
         <reference name="customer_edit_tab_view">
-            <block type="membership/adminhtml_customer_edit_tab_view" after="sales" name="test" template="membership/block.phtml"></block>
+            <block type="membership/adminhtml_customer_edit_tab_view" after="sales" name="membership_block" template="membership/block.phtml"></block>
         </reference>
     </adminhtml_customer_edit>
 
