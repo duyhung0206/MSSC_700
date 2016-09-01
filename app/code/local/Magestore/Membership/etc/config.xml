@@ -168,6 +168,12 @@
             <membership_mysql4>
                 <class>Magestore_Membership_Model_Mysql4</class>
                 <entities>
+                    <updowntransaction>
+                        <table>membership_updown_transaction</table>
+                    </updowntransaction>
+                    <updowntypetransaction>
+                        <table>membership_updown_type_transaction</table>
+                    </updowntypetransaction>
                     <group>
                         <table>membership_group</table>
                     </group>
