@@ -5,7 +5,7 @@ class Magestore_Membership_Model_Memberpackage extends Mage_Core_Model_Abstract 
     const STATUS_ENABLED = 1;
     const STATUS_WARNING = 2;
     const STATUS_EXPIRED = 3;
-    const XML_PATH_MEMBERSHIP_WARNING_DAYS = 'membership/general/warning_day';
+    const XML_PATH_MEMBERSHIP_BEFORE_EXPIRE_DAYS = 'membership/general/send_email_to_member_before';
 
     public function _construct() {
         parent::_construct();
@@ -21,15 +21,19 @@ class Magestore_Membership_Model_Memberpackage extends Mage_Core_Model_Abstract 
     public function updatePackageStatus() {
         $status = self::STATUS_ENABLED;
         $endTime = $this->getEndTime();
+        $expireDays = Mage::getStoreConfig(self::XML_PATH_MEMBERSHIP_BEFORE_EXPIRE_DAYS);
+        $expireDays = $expireDays ? $expireDays : 15;
+        $expireTime = date('Y-m-d H:i:s', strtotime($endTime . '-' . $expireDays . ' days'));
+        $surplus = $expireDays % 2;
 
-        $warningDays = Mage::getStoreConfig(self::XML_PATH_MEMBERSHIP_WARNING_DAYS);
-        $warningDays = $warningDays ? $warningDays : 5;
-        $warningTime = date('Y-m-d H:i:s', strtotime($endTime . '-' . $warningDays . ' days'));
         if (now() >= $endTime) {
             $status = self::STATUS_EXPIRED;
         }
-        if ((now() < $endTime) && now() >= $warningTime) {
-            $status = self::STATUS_WARNING;
+        if ((now() < $endTime) && now() >= $expireTime) {
+            $expireDaysNowToEnd = (int)((strtotime($endTime)- strtotime(now()))/(60*60*24));
+
+            if($expireDaysNowToEnd% 2 == $surplus)
+                $status = self::STATUS_WARNING;
         }
 
         $this->setStatus($status);
