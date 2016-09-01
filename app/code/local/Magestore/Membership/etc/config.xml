@@ -43,7 +43,7 @@
 			
             <membership_noticestatuspackage>
                 <schedule>
-                    <cron_expr>0 * * * *</cron_expr>
+                    <cron_expr>* * */2 * *</cron_expr>
                 </schedule>
                 <run>
                     <model>membership/observer::noticeStatusPackage</model>
