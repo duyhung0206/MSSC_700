@@ -239,7 +239,7 @@ class Magestore_Membership_Model_Observer {
 
         //update member package status
         $collection = Mage::getModel('membership/memberpackage')->getCollection()
-                ->addFieldToFilter('end_time', array('datetime' => true, 'to' => now()));
+                ->addFieldToFilter('end_time', array('datetime' => true, 'from' => now()));
         if (count($collection)) {
             foreach ($collection as $memberpackage) {
                 $memberpackage->updatePackageStatus();

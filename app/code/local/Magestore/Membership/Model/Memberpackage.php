@@ -21,15 +21,19 @@ class Magestore_Membership_Model_Memberpackage extends Mage_Core_Model_Abstract 
     public function updatePackageStatus() {
         $status = self::STATUS_ENABLED;
         $endTime = $this->getEndTime();
-
         $expireDays = Mage::getStoreConfig(self::XML_PATH_MEMBERSHIP_BEFORE_EXPIRE_DAYS);
         $expireDays = $expireDays ? $expireDays : 15;
         $expireTime = date('Y-m-d H:i:s', strtotime($endTime . '-' . $expireDays . ' days'));
+        $surplus = $expireDays % 2;
+
         if (now() >= $endTime) {
             $status = self::STATUS_EXPIRED;
         }
         if ((now() < $endTime) && now() >= $expireTime) {
-            $status = self::STATUS_WARNING;
+            $expireDaysNowToEnd = (int)((strtotime($endTime)- strtotime(now()))/(60*60*24));
+
+            if($expireDaysNowToEnd% 2 == $surplus)
+                $status = self::STATUS_WARNING;
         }
 
         $this->setStatus($status);
