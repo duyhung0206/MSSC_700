@@ -325,7 +325,6 @@ class Magestore_Membership_Model_Observer {
      */
 
     public function noticeStatusPackage() {
-
         //update member package status
         $collection = Mage::getModel('membership/memberpackage')->getCollection()
                 ->addFieldToFilter('end_time', array('datetime' => true, 'from' => now()));
