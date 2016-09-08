@@ -162,30 +162,30 @@
 }
 .planinfo
 {
-	margin-left: 0;
-	padding-left: 0;
-	list-style: none;
-	line-height:25px;
+    margin-left: 0;
+    padding-left: 0;
+    list-style: none;
+    line-height:25px;
 }
 
 .planinfo li.yes
 {
-	padding-left: 25px;
-	background-image: url(images/yes-check.gif);
-	background-repeat: no-repeat;
-	background-position: 0 .5em;
-	text-align:left;
-	vertical-align:middle;
+    padding-left: 25px;
+    background-image: url(images/yes-check.gif);
+    background-repeat: no-repeat;
+    background-position: 0 .5em;
+    text-align:left;
+    vertical-align:middle;
 }
 
 .planinfo li.no
 {
-	padding-left: 25px;
-	background-image: url(images/no-x.gif);
-	background-repeat: no-repeat;
-	background-position: 0 .5em;
-	text-align:left;
-	vertical-align:middle;
+    padding-left: 25px;
+    background-image: url(images/no-x.gif);
+    background-repeat: no-repeat;
+    background-position: 0 .5em;
+    text-align:left;
+    vertical-align:middle;
 }
 
 .td_input_checkbox{
@@ -208,3 +208,47 @@
     border-radius: 3px;
     text-decoration: none;
 }
+
+body{
+    font-family: "Open Sans", arial, tahoma;
+    font-weight: normal;
+}#mainMenu li.level0 a, #mainMenu li.level0 a span, #mainMenu li.level1 a, #mainMenu li.level1 a span, #mainMenu li.level2 a, #mainMenu li.level2 a span, #menu-collapse a.level0{font-family: "Lato", arial, tahoma;}
+.nav-sub-menu li.level0 a, .nav-sub-menu li.level0 a span, .nav-sub-menu li.level1 a, .nav-sub-menu li.level1 a span, .nav-sub-menu li.level2 a, .nav-sub-menu li.level2 a span, #menu-button{font-family: "Lato", arial, tahoma;}
+h1, .h1 , .page-title h1{font-family: "Oswald", arial, tahoma;}
+h2, .h2, .page-title h2{font-family: "Oswald", arial, tahoma;}
+h3, .h3, .page-title h3{font-family: "Oswald", arial, tahoma;}
+h4, .h4{font-family: "Oswald", arial, tahoma;}
+h5, .h5{font-family: "Oswald", arial, tahoma;}
+h6, .h6{font-family: "Oswald", arial, tahoma;}
+.btn , .product-label{font-family: "Oswald", arial, tahoma;}
+.price, .price-box .price{font-family: "Oswald", arial, tahoma;}
+a{color: #007986;}
+a:hover{color: #007986;}
+body{color: #007986;}
+.btn-default{color: #ffffff;background: #007986;}
+.btn-default:hover{color: #ffffff;background: #3b3b3b;}
+.btn-primary{color: #ffffff;background: #007986;}
+.btn-primary:hover{color: #ffffff;background: #3b3b3b;}
+.header-top, #header-v2 .header-top{background-color: #2d2d2d !important;}
+header .header-content{background-color: #d2d2d2 !important;}
+#nav_container{background-color: #d2d2d2 !important;}
+#nav_container #mainMenu a.level0{color: #007986 !important;}
+header nav ul.nav-main li.dropdown > a.level0:after{background-color: #007986 !important;}
+#nav_container #mainMenu a.level0:hover{color: #2d2d2d !important;}
+header nav ul.nav-main li > a.level0:before{background-color: #2d2d2d !important;}
+#nav_container .sub-container{border-color: #007986 !important;}
+.top-footer{color: #ffffff !important;}
+.top-footer a{color: #ffffff !important;}
+.top-footer a:hover{color: #007986 !important;}
+.top-footer h2,.top-footer h3,.top-footer h4,.top-footer h5,.top-footer h6{color: #ffffff !important;}
+.top-footer .fa{color: #ffffff !important;}
+.middle-footer{background-color: #2d2d2d !important;color: #ffffff !important;}
+.middle-footer a{color: #ffffff !important;}
+.middle-footer a:hover{color: #007986 !important;}
+.middle-footer h2,.middle-footer h3,.middle-footer h4,.middle-footer h5,.middle-footer h6{color: #ffffff !important;}
+.middle-footer .fa{color: #ffffff !important;}
+.bottom-footer{background-color: #212121 !important;color: #ffffff !important;}
+.bottom-footer a{color: #ffffff !important;}
+.bottom-footer a:hover{color: #007986 !important;}
+.bottom-footer h2,.bottom-footer h3,.bottom-footer h4,.bottom-footer h5,.bottom-footer h6{color: #ffffff !important;}
+.bottom-footer .fa{color: #ffffff !important;}

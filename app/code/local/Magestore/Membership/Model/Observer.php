@@ -45,8 +45,6 @@ class Magestore_Membership_Model_Observer {
             return;
         if($customer->getBlockAccount() == 1){
             Mage::app()->getResponse()->setRedirect(Mage::getUrl("membership/index/blockaccount"));
-        }else{
-            echo "Not found";
         }
 
     }
