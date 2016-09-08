@@ -9,8 +9,8 @@
                 <new_package_email_template>magestore_membership_new_package</new_package_email_template>
                 <notify_renew_package_email_template>magestore_membership_notify_renew_package</notify_renew_package_email_template>
 				<notify_auto_renew_package_email_template>magestore_membership_notify_auto_renew_package</notify_auto_renew_package_email_template>
-                <send_email_to_member_before>5</send_email_to_member_before>												
-                <warning_day>5</warning_day>												
+                <send_email_to_member_before>15</send_email_to_member_before>
+                <!--<warning_day>5</warning_day>-->
             </general>
             <styles>
                 <box_color>94C651</box_color>
