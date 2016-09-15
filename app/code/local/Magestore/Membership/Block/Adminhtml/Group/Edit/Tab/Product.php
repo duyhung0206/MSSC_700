@@ -46,6 +46,22 @@ class Magestore_Membership_Block_Adminhtml_Group_Edit_Tab_Product extends Mage_A
         if (count($membershipProductIds)) {
             $collection->addFieldToFilter('entity_id', array('nin' => $membershipProductIds));
         }
+		//$productIds = Mage::getModel('membership/groupproduct')->getCollection();
+		// $groupId = Mage::getModel('membership/groupproduct')->getCollection()
+					// ->addFieldToFilter('group_status', 1)
+					
+		$options = Mage::getModel('membership/groupproduct')->getCollection();
+
+        $option_product_ids = array();
+
+        if (count($options)) {
+			
+            foreach ($options as $option) {
+                $option_product_ids[] = $option->getProductId();
+            }
+        }
+        if (count($option_product_ids) && !$this->getRequest()->getParam('id'))
+            $collection->addFieldToFilter('entity_id', array('nin' => $option_product_ids));
 
         $this->setCollection($collection);
 
