@@ -236,13 +236,5 @@ class Magestore_Membership_Adminhtml_Membership_GroupController extends Mage_Adm
     {
         return Mage::getSingleton('admin/session')->isAllowed('membership/group');
     }
-	
-	public function massAction(){
-		die('1');
-		$data = $this->getRequest()->getPost();
-		$model = Mage::getModel('membership/groupprice')->setData($data);
-		$model->save();
-		$this->_redirect('*/*/edit/id/26');
-	}
 
 }
