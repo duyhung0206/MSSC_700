@@ -1,5 +1,6 @@
 <h2 style="color:red;"><?php echo $this->__('Table Group') ?></h2>
-<?php $models = Mage::getModel('membership/group')->getCollection();?>
+<?php $models = Mage::getModel('membership/group')->getCollection()
+						->setOrder('group_id','ASC');?>
 <?php if(count($models) == null){?>
 	<h4><?php echo $this->__('Table group is empty');?></h4>
 <?php return;}?>	
@@ -9,7 +10,7 @@
 			<tr class="row">
 				<th style="text-align:center;"><?php echo $this->__('Group') ?></th>
 				<?php foreach($models as $model){ ?>
-				<th width=""><?php echo $model->getGroupName() ?></th>
+				<th style="width:300px;"><?php echo $model->getGroupName() ?></th>
 				<?php }?>
 			</tr>
 		</thead>
@@ -19,9 +20,11 @@
 				<th class="name"  width= "10%"><?php echo $model->getGroupName()?></th>
 			  
 			<?php $collections = Mage::getModel('membership/groupprice')->getCollection()
-								->addFieldToFilter('group_from', $model->getGroupId());?>
+								->addFieldToFilter('group_from', $model->getGroupId())
+								->setOrder('group_from','ASC')
+								->setOrder('group_to','ASC');?>
 			<?php foreach($collections as $collection){?>           
-				<td><input type="text" name="groupprice[]" value="<?php echo $collection->getPrice();?>"></input></td> 
+				<td><input style="width:300px;" name="groupprice[]" value="<?php echo $collection->getPrice();?>"></input></td> 
 					
 		   <?php }?>
 		   </tr>

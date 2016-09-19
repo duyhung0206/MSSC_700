@@ -17,49 +17,55 @@ CREATE TABLE {$this->getTable('membership_group_price')} (
 
 
 $groups = Mage::getModel('membership/group')->getCollection();
-$model = Mage::getModel('membership/groupprice');
 
 if (count($groups)) {
 	foreach ($groups as $group) {
 		
-		if(!count($model->getCollection()->addFieldToFilter('group_from', $group->getGroupId())))
-		{               
-		$model->setGroupFrom($group->getGroupId());
-		$model->setGroupTo($group->getGroupId());
-		$model->setPrice(0);
+		$model = Mage::getModel('membership/groupprice');             
+		$model->setData('group_from', $group->getGroupId());
+		$model->setData('group_to', $group->getGroupId());
+		$model->setData('price', 0);
 		$model->save();
-		}
+		
 	}
 	$firstAsc = Mage::getModel('membership/group')->getCollection()
 								->setOrder('group_id','ASC')
 								->getFirstItem();
 	$firstAscId = $firstAsc->getGroupId();
-	$collections = Mage::getModel('membership/group')->getCollection();
+	$collections = Mage::getModel('membership/group')->getCollection()
 			->addFieldToFilter('group_id',array('nin'=>$firstAscId));
 	foreach($collections as $collection){
-		$model->setGroupFrom($firstAscId);
-		$model->setGroupTo($collection->getGroupId());
-		$model->setPrice(0);
+		$model = Mage::getModel('membership/groupprice');
+		$model->setData('group_from',$firstAscId);
+		$model->setData('group_to',$collection->getGroupId());
+		$model->setData('price', 0);
 		$model->save();
-		$model->setGroupTo($firstAscId);
-		$model->setGroupFrom($collection->getGroupId());
-		$model->setPrice(0);
+	}
+	foreach($collections as $collection){
+		$model = Mage::getModel('membership/groupprice');
+		$model->setData('group_to',$firstAscId);
+		$model->setData('group_from',$collection->getGroupId());
+		$model->setData('price', 0);
 		$model->save();
 	}
 	$firstDesc = Mage::getModel('membership/group')->getCollection()
 								->setOrder('group_id','DESC')
 								->getFirstItem();
 	$firstDescId = $firstDesc->getGroupId();
-	$colls = Mage::getModel('membership/group')->getCollection();
-			->addFieldToFilter('group_id',array('nin'=>($firstAscId, $firstDescId)));
+	$colls = Mage::getModel('membership/group')->getCollection()
+			->addFieldToFilter('group_id',array('nin'=>array($firstAscId , $firstDescId)));
 	foreach($colls as $coll){
-		$model->setGroupFrom($firstDescId);
-		$model->setGroupTo($coll->getGroupId());
-		$model->setPrice(0);
+		$model = Mage::getModel('membership/groupprice');
+		$model->setData('group_from',$firstDescId);
+		$model->setData('group_to',$coll->getGroupId());
+		$model->setData('price', 0);
 		$model->save();
-		$model->setGroupTo($firstDescId);
-		$model->setGroupFrom($coll->getGroupId());
-		$model->setPrice(0);
+	}	
+	foreach($colls as $coll){
+		$model = Mage::getModel('membership/groupprice');
+		$model->setData('group_to',$firstDescId);
+		$model->setData('group_from',$coll->getGroupId());
+		$model->setData('price', 0);
 		$model->save();
 	}
 	
