@@ -53,7 +53,7 @@
     </crontab>
     <modules>
         <Magestore_Membership>
-            <version>0.1.8</version>
+            <version>0.2.0</version>
         </Magestore_Membership>
     </modules>
     <frontend>
@@ -67,6 +67,60 @@
                     </magestore_membership_observer>
                 </observers>
             </controller_action_predispatch>
+            <sales_quote_item_save_before>
+                <observers>
+                    <magestore_membership_observer>
+                        <type>singleton</type>
+                        <class>membership/observer</class>
+                        <method>quote_item_save_before</method>
+                    </magestore_membership_observer>
+                </observers>
+            </sales_quote_item_save_before>
+            <sales_order_save_after>
+                <observers>
+                    <magestore_membership_observer>
+                        <type>singleton</type>
+                        <class>membership/observer</class>
+                        <method>after_save_order</method>
+                    </magestore_membership_observer>
+                </observers>
+            </sales_order_save_after>
+            <controller_action_predispatch_checkout_cart_updateItemOptions>
+                <observers>
+                    <magestore_membership_observer>
+                        <type>singleton</type>
+                        <class>membership/observer</class>
+                        <method>updateItemOptionsCartBefore</method>
+                    </magestore_membership_observer>
+                </observers>
+            </controller_action_predispatch_checkout_cart_updateItemOptions>
+            <controller_action_predispatch_checkout_cart_ajaxUpdate>
+                <observers>
+                    <magestore_membership_observer>
+                        <type>singleton</type>
+                        <class>membership/observer</class>
+                        <method>ajaxUpdateCartBefore</method>
+                    </magestore_membership_observer>
+                </observers>
+            </controller_action_predispatch_checkout_cart_ajaxUpdate>
+            <sales_quote_remove_item>
+                <observers>
+                    <magestore_membership_observer>
+                        <type>singleton</type>
+                        <class>membership/observer</class>
+                        <method>removeProductExchange</method>
+                    </magestore_membership_observer>
+                </observers>
+            </sales_quote_remove_item>
+            <sales_quote_collect_totals_after>
+                <observers>
+                    <magestore_membership_observer>
+                        <type>singleton</type>
+                        <class>membership/observer</class>
+                        <method>setCustomDiscount</method>
+                    </magestore_membership_observer>
+                </observers>
+            </sales_quote_collect_totals_after>
         </events>
         <routers>
             <membership>
@@ -124,6 +178,77 @@
         </translate>			
     </adminhtml>   
     <global>
+        <sales>
+            <quote>
+                <totals>
+                    <magestore_membership_fee>
+                        <class>membership/sales_quote_address_total_fee</class>
+                        <sort_order>25</sort_order>
+                    </magestore_membership_fee>
+                    <magestore_membership_refundcredit>
+                        <class>membership/sales_quote_address_total_refundcredit</class>
+                        <sort_order>28</sort_order>
+                    </magestore_membership_refundcredit>
+
+                    <!--set order for sale quote total-->
+                    <nominal>
+                        <class>sales/quote_address_total_nominal</class>
+                        <sort_order>10</sort_order>
+                    </nominal>
+                    <subtotal>
+                        <class>sales/quote_address_total_subtotal</class>
+                        <sort_order>20</sort_order>
+                    </subtotal>
+                    <msrp>
+                        <class>sales/quote_address_total_msrp</class>
+                        <sort_order>30</sort_order>
+                    </msrp>
+                    <freeshipping>
+                        <class>salesrule/quote_freeshipping</class>
+                        <sort_order>40</sort_order>
+                    </freeshipping>
+                    <tax_subtotal>
+                        <class>tax/sales_total_quote_subtotal</class>
+                        <sort_order>50</sort_order>
+                    </tax_subtotal>
+                    <weee>
+                        <class>weee/total_quote_weee</class>
+                        <sort_order>60</sort_order>
+                    </weee>
+                    <shipping>
+                        <class>sales/quote_address_total_shipping</class>
+                        <sort_order>70</sort_order>
+                    </shipping>
+                    <tax_shipping>
+                        <class>tax/sales_total_quote_shipping</class>
+                        <sort_order>80</sort_order>
+                    </tax_shipping>
+                    <discount>
+                        <class>salesrule/quote_discount</class>
+                        <sort_order>90</sort_order>
+                    </discount>
+                    <customercreditbeforetax>
+                        <class>customercredit/total_quote_discountbeforetax</class>
+                        <sort_order>100</sort_order>
+                    </customercreditbeforetax>
+                    <tax>
+                        <class>tax/sales_total_quote_tax</class>
+                        <sort_order>110</sort_order>
+                    </tax>
+
+                    <customercredit>
+                        <class>customercredit/total_quote_discount</class>
+                        <sort_order>120</sort_order>
+                    </customercredit>
+
+                    <grand_total>
+                        <class>sales/quote_address_total_grand</class>
+                        <sort_order>130</sort_order>
+                    </grand_total>
+
+                </totals>
+            </quote>
+        </sales>
         <events>
             <core_block_abstract_prepare_layout_before>
                 <observers>

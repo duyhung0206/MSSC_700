@@ -2,6 +2,237 @@
 
 class Magestore_Membership_Model_Observer {
 
+    public function quote_item_save_before($observer)
+    {
+        if (Mage::getSingleton('core/session')->getData('checkout_exchange') == true) {
+            Mage::getSingleton('core/session')->setData('checkout_exchange', false);
+            return;
+        }
+
+        Mage::getSingleton('checkout/session')->getMessages(true);
+        $item = $observer['item'];
+
+        $proExch = $item->getOptionByCode('product_exchange_id');
+        $proBou = $item->getOptionByCode('product_bought_id');
+        $qty = $item->getOptionByCode('qty_exchange');
+        if ($proExch != null && $proExch->getValue() > 0 && $qty->getValue() != $item->getQty()) {
+            $item->setQty($qty->getValue());
+            Mage::getSingleton('core/session')->getMessages(true);
+            Mage::getSingleton('core/session')->addError(Mage::helper('membership')->__('You can not update the quantity of exchange product.'));
+        }
+
+    }
+
+    public function setCustomDiscount($observer)
+    {
+        $quote = $observer->getEvent()->getQuote();
+        $quoteid = $quote->getId();
+
+        $discountAmount = 0;
+        $refundCredit = 0;
+        $fee = 0;
+        $items = $quote->getAllItems();
+        foreach ($items as $item) {
+            $proExch = $item->getOptionByCode('product_exchange_id');
+            $discount = $item->getOptionByCode('discount');
+            if ($proExch != null && $proExch->getValue() > 0) {
+                try {
+                    $discountAmount += $discount->getValue();
+                } catch (Exception $e) {
+                    Mage::log($e->getMessage(), null, 'membership.log');
+                }
+            }
+
+            $credit = $item->getOptionByCode('refund_credit');
+            if ($credit != null && $credit->getValue() > 0) {
+                try {
+                    $refundCredit += $credit->getValue();
+                } catch (Exception $e) {
+                    Mage::log($e->getMessage(), null, 'membership.log');
+                }
+            }
+
+            $feeitem = $item->getOptionByCode('fee');
+            if ($feeitem != null && $feeitem->getValue() > 0) {
+                try {
+                    $fee += $feeitem->getValue();
+                } catch (Exception $e) {
+                    Mage::log($e->getMessage(), null, 'membership.log');
+                }
+            }
+
+        }
+        $discountText = Mage::helper('membership')->__('Discount exchange product');
+
+        if ($quoteid && ($discountAmount > 0 || $fee > 0 || $refundCredit > 0)) {
+
+            if ($discountAmount > 0 || $fee > 0 || $refundCredit > 0) {
+
+                $total = $quote->getBaseSubtotal();
+                $quote->setSubtotal(0);
+                $quote->setBaseSubtotal(0);
+                $quote->setSubtotalWithDiscount(0);
+                $quote->setBaseSubtotalWithDiscount(0);
+                $quote->setGrandTotal(0);
+                $quote->setBaseGrandTotal(0);
+                $canAddItems = $quote->isVirtual() ? ('billing') : ('shipping');
+                $addresses = $quote->getAllAddresses();
+                foreach ($addresses as $address) {
+                    $address->setSubtotal(0);
+                    $address->setBaseSubtotal(0);
+                    $address->setGrandTotal(0);
+                    $address->setBaseGrandTotal(0);
+                    $address->collectTotals();
+                    $quote->setSubtotal((float)$quote->getSubtotal() + $address->getSubtotal());
+                    $quote->setBaseSubtotal((float)$quote->getBaseSubtotal() + $address->getBaseSubtotal());
+                    $quote->setSubtotalWithDiscount((float)$quote->getSubtotalWithDiscount() + $address->getSubtotalWithDiscount());
+                    $quote->setBaseSubtotalWithDiscount((float)$quote->getBaseSubtotalWithDiscount() + $address->getBaseSubtotalWithDiscount());
+                    $quote->setGrandTotal((float)$quote->getGrandTotal() + $address->getGrandTotal());
+                    $quote->setBaseGrandTotal((float)$quote->getBaseGrandTotal() + $address->getBaseGrandTotal());
+
+                    $quote->save();
+                    $quote->setGrandTotal($quote->getBaseSubtotal() - $discountAmount + $fee)
+                        ->setBaseGrandTotal($quote->getBaseSubtotal() - $discountAmount + $fee)
+                        ->setSubtotalWithDiscount($quote->getBaseSubtotal() - $discountAmount + $fee)
+                        ->setBaseSubtotalWithDiscount($quote->getBaseSubtotal() - $discountAmount + $fee)
+                        ->save();
+
+                    if ($address->getAddressType() == $canAddItems) {
+                        $address->setSubtotalWithDiscount((float)$address->getSubtotalWithDiscount() - $discountAmount);
+                        $address->setGrandTotal((float)$address->getGrandTotal() - $discountAmount);
+                        $address->setBaseSubtotalWithDiscount((float)$address->getBaseSubtotalWithDiscount() - $discountAmount);
+                        $address->setBaseGrandTotal((float)$address->getBaseGrandTotal() - $discountAmount);
+
+                        if ($address->getDiscountDescription()) {
+                            $address->setDiscountAmount(-($address->getDiscountAmount() - $discountAmount));
+                            $address->setDiscountDescription($address->getDiscountDescription() . ', ' . $discountText);
+                            $address->setBaseDiscountAmount(-($address->getBaseDiscountAmount() - $discountAmount));
+
+                            $address->setRefundcreditAmount($refundCredit);
+                            $address->setBaseRefundcreditAmount($refundCredit);
+                            $address->setFeeAmount($fee);
+                            $address->setBaseFeeAmount($fee);
+
+                        } else {
+                            $address->setDiscountAmount(-($discountAmount));
+                            $address->setDiscountDescription($discountText);
+                            $address->setBaseDiscountAmount(-($discountAmount));
+
+                            $address->setRefundcreditAmount($refundCredit);
+                            $address->setBaseRefundcreditAmount($refundCredit);
+                            $address->setFeeAmount($fee);
+                            $address->setBaseFeeAmount($fee);
+                        }
+
+                        $address->save();
+                    }
+
+                }
+
+
+                foreach ($quote->getAllItems() as $item) {
+                    $rat = $item->getPriceInclTax() / $total;
+                    $ratdisc = $discountAmount * $rat;
+                    $item->setDiscountAmount(($item->getDiscountAmount() + $ratdisc) * $item->getQty());
+                    $item->setBaseDiscountAmount(($item->getBaseDiscountAmount() + $ratdisc) * $item->getQty())->save();
+                }
+            }
+        }
+    }
+
+
+    public function removeProductExchange($observer)
+    {
+        $customerId = Mage::getSingleton('customer/session')->getCustomerId();
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        if (!$quote->getId() || $quote->getId() <= 0) {
+            $quote = Mage::getModel('sales/quote')->assignCustomer(Mage::getModel('customer/customer')->load($customerId));
+            $quote->setStoreId(Mage::app()->getStore()->getStoreId());
+        }
+        Mage::helper('membership')->updateFeeCart($quote);
+//        $quote->save();
+    }
+
+    public function after_save_order($observer)
+    {
+
+        if (!Mage::registry('check_transaction')) {
+            Mage::register('check_transaction', '1');
+            $order = $observer->getEvent()->getOrder();
+            $quoteId = $order->getQuoteId();
+            $quote = Mage::getModel('sales/quote')->load($quoteId);
+            $items = $quote->getAllItems();
+            foreach ($items as $item) {
+                $proExch = $item->getOptionByCode('product_exchange_id');
+                $proBou = $item->getOptionByCode('product_bought_id');
+                $qty = $item->getOptionByCode('qty_exchange');
+                if ($proExch != null && $proExch->getValue() > 0) {
+                    try {
+                        $productExchangeId = $proExch->getValue();
+                        $productBoughtId = $proBou->getValue();
+                        $qtyExchange = $qty->getValue();
+
+                        /*refund product boughts*/
+
+                        /*add transaction
+                         time, detail. order of product bought, order of product exchange*/
+                    } catch (Exception $e) {
+                        Mage::log($e->getMessage(), null, 'membership.log');
+                    }
+                }
+
+
+            }
+        }
+    }
+
+    public function updateItemOptionsCartBefore($observer)
+    {
+        $action = $observer->getEvent()->getControllerAction();
+        $id = (int)$action->getRequest()->getParam('id');
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $items = $quote->getAllItems();
+        foreach ($items as $item) {
+            if ($item->getId() == $id) {
+                $proExch = $item->getOptionByCode('product_exchange_id');
+                $proBou = $item->getOptionByCode('product_bought_id');
+                $qty = $item->getOptionByCode('qty_exchange');
+                if ($proExch != null && $proExch->getValue() > 0) {
+                    $action->loadLayout();
+                    $action->setFlag('', Mage_Core_Controller_Varien_Action::FLAG_NO_DISPATCH, true);
+                    Mage::getSingleton('checkout/session')->addError(Mage::helper('membership')->__('Can not update exchange quantity!'));
+                    Mage::app()->getResponse()->setRedirect(Mage::getUrl('checkout/cart'));
+                }
+                break;
+            }
+        }
+    }
+
+    public function ajaxUpdateCartBefore($observer)
+    {
+        $action = $observer->getEvent()->getControllerAction();
+        $id = (int)$action->getRequest()->getParam('id');
+
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+        $items = $quote->getAllItems();
+        foreach ($items as $item) {
+            if ($item->getId() == $id) {
+                $proExch = $item->getOptionByCode('product_exchange_id');
+                $proBou = $item->getOptionByCode('product_bought_id');
+                $qty = $item->getOptionByCode('qty_exchange');
+                if ($proExch != null && $proExch->getValue() > 0) {
+                    $action->loadLayout();
+                    $action->setFlag('', Mage_Core_Controller_Varien_Action::FLAG_NO_DISPATCH, true);
+                    $result = array();
+                    $result['error'] = Mage::helper('membership')->__('Can not update exchange quantity!');
+                    $action->getResponse()->setHeader('Content-type', 'application/json');
+                    $action->getResponse()->setBody(Mage::helper('core')->jsonEncode($result));
+                }
+
+                break;
+            }
+        }
+    }
 
     public function appendCustomColumn(Varien_Event_Observer $observer){
         $block = $observer->getBlock();

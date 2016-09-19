@@ -90,7 +90,9 @@ class Magestore_Customercredit_Model_Total_Quote_Discount extends Mage_Sales_Mod
             $shippingDiscount = $address->getBaseShippingAmount() + $address->getBaseShippingTaxAmount() - $address->getBaseShippingDiscountAmount() - $address->getMagestoreBaseDiscountForShipping();
             $baseDiscountTotal += $shippingDiscount;
         }
-        
+        if ($address->getFeeAmount()) {
+            $baseDiscountTotal += $address->getFeeAmount();
+        }
         $customercreditBalance = Mage::getModel('customercredit/customercredit')->getBaseCustomerCredit();
         
         $baseCustomercreditDiscount = min($creditAmountEntered, $baseDiscountTotal, $customercreditBalance);

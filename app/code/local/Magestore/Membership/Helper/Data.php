@@ -2,6 +2,151 @@
 
 class Magestore_Membership_Helper_Data extends Mage_Core_Helper_Abstract {
 
+    /* public function updateFeeCart($quote){
+         $quoteid = $quote->getId();
+ 
+         $discountAmount = 0;
+         $refundCredit = 0;
+         $fee = 0;
+         $items = $quote->getAllItems();
+         foreach ($items as $item) {
+             $proExch = $item->getOptionByCode('product_exchange_id');
+             $discount = $item->getOptionByCode('discount');
+             if ($proExch != null && $proExch->getValue() > 0) {
+                 try {
+                     $discountAmount+=$discount->getValue();
+                 } catch (Exception $e) {
+                     Mage::log($e->getMessage(), null, 'membership.log');
+                 }
+             }
+ 
+             $credit = $item->getOptionByCode('refund_credit');
+             if ($credit != null && $credit->getValue() > 0) {
+                 try {
+                     $refundCredit+=$credit->getValue();
+                 } catch (Exception $e) {
+                     Mage::log($e->getMessage(), null, 'membership.log');
+                 }
+             }
+ 
+             $feeitem = $item->getOptionByCode('fee');
+             if ($feeitem != null && $feeitem->getValue() > 0) {
+                 try {
+                     $fee+=$feeitem->getValue();
+                 } catch (Exception $e) {
+                     Mage::log($e->getMessage(), null, 'membership.log');
+                 }
+             }
+ 
+         }
+         $discountText = Mage::helper('membership')->__('Discount exchange product');
+ 
+         if ($quoteid && ($discountAmount > 0 || $fee >0 || $refundCredit >0)) {
+ 
+             if ($discountAmount > 0 || $fee >0 || $refundCredit >0) {
+ 
+                 $total = $quote->getBaseSubtotal();
+                 $quote->setSubtotal(0);
+                 $quote->setBaseSubtotal(0);
+                 $quote->setSubtotalWithDiscount(0);
+                 $quote->setBaseSubtotalWithDiscount(0);
+                 $quote->setGrandTotal(0);
+                 $quote->setBaseGrandTotal(0);
+                 $canAddItems = $quote->isVirtual() ? ('billing') : ('shipping');
+                 $addresses = $quote->getAllAddresses();
+                 foreach ($addresses as $address) {
+                     $address->setSubtotal(0);
+                     $address->setBaseSubtotal(0);
+                     $address->setGrandTotal(0);
+                     $address->setBaseGrandTotal(0);
+                     $address->collectTotals();
+                     $quote->setSubtotal((float)$quote->getSubtotal() + $address->getSubtotal());
+                     $quote->setBaseSubtotal((float)$quote->getBaseSubtotal() + $address->getBaseSubtotal());
+                     $quote->setSubtotalWithDiscount((float)$quote->getSubtotalWithDiscount() + $address->getSubtotalWithDiscount());
+                     $quote->setBaseSubtotalWithDiscount((float)$quote->getBaseSubtotalWithDiscount() + $address->getBaseSubtotalWithDiscount());
+                     $quote->setGrandTotal((float)$quote->getGrandTotal() + $address->getGrandTotal());
+                     $quote->setBaseGrandTotal((float)$quote->getBaseGrandTotal() + $address->getBaseGrandTotal());
+ 
+                     $quote->save();
+                     $quote->setGrandTotal($quote->getBaseSubtotal() - $discountAmount + $fee)
+                         ->setBaseGrandTotal($quote->getBaseSubtotal() - $discountAmount + $fee )
+                         ->setSubtotalWithDiscount($quote->getBaseSubtotal() - $discountAmount + $fee)
+                         ->setBaseSubtotalWithDiscount($quote->getBaseSubtotal() - $discountAmount + $fee)
+                         ->save();
+ 
+ 
+                     if ($address->getAddressType() == $canAddItems) {
+                         $address->setSubtotalWithDiscount((float)$address->getSubtotalWithDiscount() - $discountAmount );
+                         $address->setGrandTotal((float)$address->getGrandTotal() - $discountAmount );
+                         $address->setBaseSubtotalWithDiscount((float)$address->getBaseSubtotalWithDiscount() - $discountAmount );
+                         $address->setBaseGrandTotal((float)$address->getBaseGrandTotal() - $discountAmount );
+ 
+                         if ($address->getDiscountDescription()) {
+                             $address->setDiscountAmount(-($address->getDiscountAmount() - $discountAmount));
+                             $address->setDiscountDescription($address->getDiscountDescription() . ', '.$discountText);
+                             $address->setBaseDiscountAmount(-($address->getBaseDiscountAmount() - $discountAmount));
+ 
+ 
+                             $address->setRefundcreditAmount($refundCredit);
+                             $address->setBaseRefundcreditAmount($refundCredit);
+                             $address->setFeeAmount($fee);
+                             $address->setBaseFeeAmount($fee);
+ 
+                         } else {
+                             $address->setDiscountAmount(-($discountAmount));
+                             $address->setDiscountDescription($discountText);
+                             $address->setBaseDiscountAmount(-($discountAmount));
+ 
+                             $address->setRefundcreditAmount($refundCredit);
+                             $address->setBaseRefundcreditAmount($refundCredit);
+                             $address->setFeeAmount($fee);
+                             $address->setBaseFeeAmount($fee);
+                         }
+ 
+ 
+ 
+                         $address->save();
+                     }
+ 
+                 }
+ 
+ 
+                 foreach ($quote->getAllItems() as $item) {
+                     $rat = $item->getPriceInclTax() / $total;
+                     $ratdisc = $discountAmount * $rat;
+                     $item->setDiscountAmount(($item->getDiscountAmount() + $ratdisc) * $item->getQty());
+                     $item->setBaseDiscountAmount(($item->getBaseDiscountAmount() + $ratdisc) * $item->getQty())->save();
+                 }
+             }
+         }
+     }*/
+
+    public function getDiscountPrice($customerId = null, $productId)
+    {
+        if ($customerId == null)
+            $customerId = Mage::getSingleton('customer/session')->getCustomerId();
+        //get Final price of product exchange after discout by membership package
+        $finalPrices = array();
+
+        if (!$customerId)
+            return 0;
+
+        if (!Mage::helper('membership')->getMemberStatus($customerId))//disabled
+            return 0;
+
+        $memberPackages = Mage::helper('membership')->isProductDiscount($customerId, $productId);
+        if (count($memberPackages) == 0)
+            return 0;
+
+        foreach ($memberPackages as $memberPackage) {
+            $package = Mage::getModel('membership/package')->load($memberPackage->getPackageId());
+
+            $finalPrices[] = Mage::helper('membership')->getMembershipPrice($productId, $package);
+        }
+
+        sort($finalPrices, SORT_NUMERIC);
+        return $finalPrices[0];
+    }
     public function getMembershipUrl() {
         return $this->_getUrl('membership/index/index');
     }
@@ -126,6 +271,43 @@ class Magestore_Membership_Helper_Data extends Mage_Core_Helper_Abstract {
                 $packages[] = $item;
         }
         return $packages;
+    }
+
+    public function isGroupDiscount($customerId, $productId = null)
+    {
+        $memberId = Mage::helper('membership')->getMemberId($customerId);
+        if (!$memberId)
+            return false;
+        Mage::helper('membership')->setStatusMemberPackage($memberId);
+
+
+        if ($productId == null) {
+            $collection = Mage::getModel('membership/groupproduct')->getCollection();
+        } else {
+            $collection = Mage::getModel('membership/groupproduct')->getCollection()
+                ->addFieldToFilter('product_id', $productId);
+        }
+        $collection->getSelect()->join(
+            'membership_group',
+            'main_table.group_id = membership_group.group_id && membership_group.group_status = 1',
+            array('group_name')
+        );
+        $collection->getSelect()->join(
+            'membership_package_group',
+            'main_table.group_id = membership_package_group.group_id',
+            array('package_id')
+        );
+        $collection->getSelect()->join(
+            'membership_member_package',
+            'membership_package_group.package_id = membership_member_package.package_id
+            && membership_member_package.status = 1
+            && membership_member_package.member_id = ' . $memberId . '
+            && membership_member_package.end_time > cast((now()) as date)',
+            array('end_time')
+        );
+        if (!count($collection))
+            return false;
+        return $collection;
     }
 
     /*
