@@ -14,6 +14,17 @@ CREATE TABLE {$this->getTable('membership_group_price')} (
  PRIMARY KEY (`group_price_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
     ");
+
+
+$setup = new Mage_Eav_Model_Entity_Setup('core_setup');
+$installer->startSetup();
+
+$installer->run(" 
+    ALTER TABLE  {$this->getTable('sales/quote_address')} ADD  `fee_amount` DECIMAL( 12, 4 ) NOT NULL default '0.0000';
+    ALTER TABLE  {$this->getTable('sales/quote_address')} ADD  `base_fee_amount` DECIMAL( 12, 4 ) NOT NULL default '0.0000';
+    ALTER TABLE  {$this->getTable('sales/order')} ADD  `fee_amount` DECIMAL( 12, 4 ) NOT NULL default '0.0000';
+    ALTER TABLE  {$this->getTable('sales/order')} ADD  `base_fee_amount` DECIMAL( 12, 4 ) NOT NULL default '0.0000';
+");
+
 $installer->endSetup();
 
-?>

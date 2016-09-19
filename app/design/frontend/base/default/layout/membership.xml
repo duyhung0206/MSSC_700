@@ -89,7 +89,42 @@
             <block type="core/template" name="membership_cssgen" template="membership/cssgen.phtml" />
         </reference>
     </customer_account>
-	
+
+    <customer_account>
+        <reference name="customer_account_navigation">
+            <action method="addLink" translate="label" module="membership">
+                <name>Exchange product</name>
+                <path>membership/exchangeproduct/index</path>
+                <label>Exchange product</label>
+            </action>
+        </reference>
+        <reference name="after_body_start">
+            <block type="core/template" name="membership_cssgen" template="membership/cssgen.phtml"/>
+        </reference>
+    </customer_account>
+
+    <membership_exchangeproduct_index>
+        <update handle="customer_account"/>
+        <reference name="head">
+            <action method="addCss">
+                <styleSheet>css/owl.carousel/owl.carousel.css</styleSheet>
+            </action>
+            <action method="addCss">
+                <styleSheet>css/owl.carousel/owl.theme.css</styleSheet>
+            </action>
+            <!--<action method="addJs">-->
+            <!--<script>owl.carousel/jquery-1.9.1.min.js</script>-->
+            <!--</action>-->
+            <action method="addJs">
+                <script>owl.carousel/owl.carousel.js</script>
+            </action>
+        </reference>
+        <reference name="content">
+            <block type="membership/exchangeproduct" name="membership_exchangeproduct"
+                   template="membership/exchangeproduct.phtml"/>
+        </reference>
+    </membership_exchangeproduct_index>
+
     <membership_plan_index>
         <update handle="customer_account"/>
         <reference name="content">
