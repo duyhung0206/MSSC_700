@@ -53,7 +53,7 @@
     </crontab>
     <modules>
         <Magestore_Membership>
-            <version>0.2.0</version>
+            <version>0.2.3</version>
         </Magestore_Membership>
     </modules>
     <frontend>
@@ -112,15 +112,15 @@
                     </magestore_membership_observer>
                 </observers>
             </sales_quote_remove_item>
-            <sales_quote_collect_totals_after>
-                <observers>
-                    <magestore_membership_observer>
-                        <type>singleton</type>
-                        <class>membership/observer</class>
-                        <method>setCustomDiscount</method>
-                    </magestore_membership_observer>
-                </observers>
-            </sales_quote_collect_totals_after>
+            <!--<sales_quote_collect_totals_after>-->
+            <!--<observers>-->
+            <!--<magestore_membership_observer>-->
+            <!--<type>singleton</type>-->
+            <!--<class>membership/observer</class>-->
+            <!--<method>setCustomDiscount</method>-->
+            <!--</magestore_membership_observer>-->
+            <!--</observers>-->
+            <!--</sales_quote_collect_totals_after>-->
         </events>
         <routers>
             <membership>
@@ -178,7 +178,56 @@
         </translate>			
     </adminhtml>   
     <global>
+        <fieldsets>
+            <sales_convert_quote_address>
+                <fee_amount>
+                    <to_order>*</to_order>
+                </fee_amount>
+                <base_fee_amount>
+                    <to_order>*</to_order>
+                </base_fee_amount>
+                <discountexchange_amount>
+                    <to_order>*</to_order>
+                </discountexchange_amount>
+                <base_discountexchange_amount>
+                    <to_order>*</to_order>
+                </base_discountexchange_amount>
+                <refundcredit_amount>
+                    <to_order>*</to_order>
+                </refundcredit_amount>
+                <base_refundcredit_amount>
+                    <to_order>*</to_order>
+                </base_refundcredit_amount>
+            </sales_convert_quote_address>
+        </fieldsets>
+
         <sales>
+            <order_invoice>
+                <totals>
+                    <magestore_membership_fee>
+                        <class>membership/sales_order_invoice_fee</class>
+                    </magestore_membership_fee>
+                    <magestore_membership_discountexchange>
+                        <class>membership/sales_order_invoice_discount</class>
+                    </magestore_membership_discountexchange>
+                    <magestore_membership_refundcredit>
+                        <class>membership/sales_order_invoice_refundcredit</class>
+                    </magestore_membership_refundcredit>
+                </totals>
+            </order_invoice>
+            <order_creditmemo>
+                <totals>
+                    <magestore_membership_fee>
+                        <class>membership/sales_order_creditmemo_fee</class>
+                    </magestore_membership_fee>
+                    <magestore_membership_discountexchange>
+                        <class>membership/sales_order_creditmemo_discount</class>
+                    </magestore_membership_discountexchange>
+                    <magestore_membership_refundcredit>
+                        <class>membership/sales_order_creditmemo_refundcredit</class>
+                    </magestore_membership_refundcredit>
+                </totals>
+            </order_creditmemo>
             <quote>
                 <totals>
                     <magestore_membership_fee>
@@ -189,6 +238,10 @@
                         <class>membership/sales_quote_address_total_refundcredit</class>
                         <sort_order>28</sort_order>
                     </magestore_membership_refundcredit>
+                    <magestore_membership_discountexchange>
+                        <class>membership/sales_quote_address_total_discount</class>
+                        <sort_order>26</sort_order>
+                    </magestore_membership_discountexchange>
 
                     <!--set order for sale quote total-->
                     <nominal>

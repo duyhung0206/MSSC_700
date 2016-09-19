@@ -14,7 +14,7 @@ class Magestore_Membership_ExchangeproductController extends Mage_Core_Controlle
         $productBoughtId = $data['group-radio-product-boughts'];
         $productExchangeId = $data['group-radio-product-exchange'];
         $maxQtyBought = $data['number-product-bought-' . $productBoughtId];
-        $qtyExchange = $data['number-exchange-' . $productExchangeId];
+        $qtyExchange = 1;
         $customerId = Mage::getSingleton('customer/session')->getCustomerId();
         if (isset($productBoughtId) && isset($productExchangeId)) {
             if (isset($maxQtyBought) && isset($qtyExchange)) {
@@ -35,11 +35,9 @@ class Magestore_Membership_ExchangeproductController extends Mage_Core_Controlle
                         $proExch = $item->getOptionByCode('product_exchange_id');
                         $proBou = $item->getOptionByCode('product_bought_id');
                         if ($proExch != null && $proExch->getValue() > 0 || $proBou != null && $proBou->getValue() > 0) {
-                            if ($proExch->getValue() == $productExchangeId || $proBou->getValue() == $productBoughtId) {
-                                Mage::getSingleton('core/session')->addError(Mage::helper('membership')->__('Exchange product exist'));
-                                $this->_redirect('checkout/cart');
-                                return;
-                            }
+                            Mage::getSingleton('core/session')->addError(Mage::helper('membership')->__('test'));
+                            $this->_redirect('checkout/cart');
+                            return;
                         }
                     }
                 }
@@ -74,7 +72,19 @@ class Magestore_Membership_ExchangeproductController extends Mage_Core_Controlle
                         'code' => 'qty_exchange',
                         'value' => $qtyExchange,
                     ));
-                    $fee = 69;
+                    /*fee*/
+                    $groupIdBought = Mage::getModel('membership/groupproduct')->getCollection()
+                        ->addFieldToFilter('product_id', $productBoughtId)
+                        ->getFirstItem()->getGroupId();
+                    $groupIdExchange = Mage::getModel('membership/groupproduct')->getCollection()
+                        ->addFieldToFilter('product_id', $productExchangeId)
+                        ->getFirstItem()->getGroupId();
+                    $fee = Mage::getModel('membership/groupprice')->getCollection()
+                        ->addFieldToFilter('group_from', $groupIdBought)
+                        ->addFieldToFilter('group_to', $groupIdExchange)
+                        ->getFirstItem()->getPrice();
+
+                    /*discount and refund credit*/
                     $discount = $priceBought;
                     if ($discount > $priceExchange) {
 
@@ -109,10 +119,10 @@ class Magestore_Membership_ExchangeproductController extends Mage_Core_Controlle
                     $quoteItem->getProduct()->setIsSuperMode(true);
                     Mage::getSingleton('core/session')->setData('checkout_exchange', true);
                     $quote->addItem($quoteItem);
-
-                    $quote->collectTotals();
-                    $quote->save();
                     Mage::helper('membership')->updateFeeCart($quote);
+                    $quote->collectTotals();
+//                    $quote->setTotalsCollectedFlag(false)->collectTotals();
+                    $quote->save();
 
                     Mage::getSingleton('core/session')->addSuccess(Mage::helper('membership')->__('Check out success !'));
                     $this->_redirect('checkout/cart');

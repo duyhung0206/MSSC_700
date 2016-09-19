@@ -331,7 +331,7 @@ class Magestore_Customercredit_Model_Observer
         //check if refund to store credit - Marko
         if (isset($data['refund_creditbalance_return'])) {
             if ($data['refund_creditbalance_return_enable'] && $data['refund_creditbalance_return'] > 0) {
-                $transaction_detail = "Refund order #" . $order->getIncrementId() . "into customer credit";
+                $transaction_detail = "Refund order #" . $order->getIncrementId() . " into customer credit";
                 $amount_credit += $data['refund_creditbalance_return'];
             }
         }

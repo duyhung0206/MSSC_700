@@ -16,7 +16,6 @@ class Magestore_Membership_Model_Sales_Quote_Address_Total_Fee extends Mage_Sale
             return $this; //this makes only address type shipping to come through
         }
 
-
         $address->setGrandTotal($address->getGrandTotal() + $address->getFeeAmount());
         $address->setBaseGrandTotal($address->getBaseGrandTotal() + $address->getBaseFeeAmount());
 

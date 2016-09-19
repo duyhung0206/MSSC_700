@@ -5,6 +5,7 @@
     <?php
     $listProductBoughts = $this->getListProductBoughtsCanExchange();
     $listGroupProductExchanges = $this->getGroupProductExchange();
+    $transactions = $this->getTransaction();
     ?>
     <h2><?php echo $this->__('My exchange') ?></h2>
     <?php if (!count($listProductBoughts)) { ?>
@@ -146,6 +147,35 @@
                 </table>
             </div>
         </form>
+    <?php } ?>
+
+    <h2><?php echo $this->__('My Transaction') ?></h2>
+    <?php if (!count($transactions)) { ?>
+        <p class="note-msg"><?php echo $this->__('You dont not transaction') ?></p>
+    <?php } else {
+        ?>
+        <div class="table-responsive form-group">
+            <table class="packages-table table table-bordered table-hover" id="packages-table">
+                <thead>
+                <tr>
+                    <th class="first"><?php echo $this->__('Date') ?></th>
+                    <th><?php echo $this->__('Product Old') ?></th>
+                    <th><?php echo $this->__('Product New') ?></th>
+                    <th><?php echo $this->__('Detail Transaction') ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($transactions as $transaction) { ?>
+                    <tr>
+                        <td class="first"><?php echo $this->formatDate($transaction->getTransactionTime(), 'short', true) ?></td>
+                        <td><?php echo Mage::getModel('catalog/product')->load($transaction->getProductIdOld())->getName() ?></td>
+                        <td><?php echo Mage::getModel('catalog/product')->load($transaction->getProductIdNew())->getName() ?></td>
+                        <td><?php echo $transaction->getDetailTransaction() ?></td>
+                    </tr>
+                <?php } ?>
+                </tbody>
+            </table>
+        </div>
     <?php } ?>
 </div>
 

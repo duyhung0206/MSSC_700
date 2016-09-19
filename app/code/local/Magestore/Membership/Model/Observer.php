@@ -2,6 +2,7 @@
 
 class Magestore_Membership_Model_Observer {
 
+
     public function quote_item_save_before($observer)
     {
         if (Mage::getSingleton('core/session')->getData('checkout_exchange') == true) {
@@ -23,124 +24,6 @@ class Magestore_Membership_Model_Observer {
 
     }
 
-    public function setCustomDiscount($observer)
-    {
-        $quote = $observer->getEvent()->getQuote();
-        $quoteid = $quote->getId();
-
-        $discountAmount = 0;
-        $refundCredit = 0;
-        $fee = 0;
-        $items = $quote->getAllItems();
-        foreach ($items as $item) {
-            $proExch = $item->getOptionByCode('product_exchange_id');
-            $discount = $item->getOptionByCode('discount');
-            if ($proExch != null && $proExch->getValue() > 0) {
-                try {
-                    $discountAmount += $discount->getValue();
-                } catch (Exception $e) {
-                    Mage::log($e->getMessage(), null, 'membership.log');
-                }
-            }
-
-            $credit = $item->getOptionByCode('refund_credit');
-            if ($credit != null && $credit->getValue() > 0) {
-                try {
-                    $refundCredit += $credit->getValue();
-                } catch (Exception $e) {
-                    Mage::log($e->getMessage(), null, 'membership.log');
-                }
-            }
-
-            $feeitem = $item->getOptionByCode('fee');
-            if ($feeitem != null && $feeitem->getValue() > 0) {
-                try {
-                    $fee += $feeitem->getValue();
-                } catch (Exception $e) {
-                    Mage::log($e->getMessage(), null, 'membership.log');
-                }
-            }
-
-        }
-        $discountText = Mage::helper('membership')->__('Discount exchange product');
-
-        if ($quoteid && ($discountAmount > 0 || $fee > 0 || $refundCredit > 0)) {
-
-            if ($discountAmount > 0 || $fee > 0 || $refundCredit > 0) {
-
-                $total = $quote->getBaseSubtotal();
-                $quote->setSubtotal(0);
-                $quote->setBaseSubtotal(0);
-                $quote->setSubtotalWithDiscount(0);
-                $quote->setBaseSubtotalWithDiscount(0);
-                $quote->setGrandTotal(0);
-                $quote->setBaseGrandTotal(0);
-                $canAddItems = $quote->isVirtual() ? ('billing') : ('shipping');
-                $addresses = $quote->getAllAddresses();
-                foreach ($addresses as $address) {
-                    $address->setSubtotal(0);
-                    $address->setBaseSubtotal(0);
-                    $address->setGrandTotal(0);
-                    $address->setBaseGrandTotal(0);
-                    $address->collectTotals();
-                    $quote->setSubtotal((float)$quote->getSubtotal() + $address->getSubtotal());
-                    $quote->setBaseSubtotal((float)$quote->getBaseSubtotal() + $address->getBaseSubtotal());
-                    $quote->setSubtotalWithDiscount((float)$quote->getSubtotalWithDiscount() + $address->getSubtotalWithDiscount());
-                    $quote->setBaseSubtotalWithDiscount((float)$quote->getBaseSubtotalWithDiscount() + $address->getBaseSubtotalWithDiscount());
-                    $quote->setGrandTotal((float)$quote->getGrandTotal() + $address->getGrandTotal());
-                    $quote->setBaseGrandTotal((float)$quote->getBaseGrandTotal() + $address->getBaseGrandTotal());
-
-                    $quote->save();
-                    $quote->setGrandTotal($quote->getBaseSubtotal() - $discountAmount + $fee)
-                        ->setBaseGrandTotal($quote->getBaseSubtotal() - $discountAmount + $fee)
-                        ->setSubtotalWithDiscount($quote->getBaseSubtotal() - $discountAmount + $fee)
-                        ->setBaseSubtotalWithDiscount($quote->getBaseSubtotal() - $discountAmount + $fee)
-                        ->save();
-
-                    if ($address->getAddressType() == $canAddItems) {
-                        $address->setSubtotalWithDiscount((float)$address->getSubtotalWithDiscount() - $discountAmount);
-                        $address->setGrandTotal((float)$address->getGrandTotal() - $discountAmount);
-                        $address->setBaseSubtotalWithDiscount((float)$address->getBaseSubtotalWithDiscount() - $discountAmount);
-                        $address->setBaseGrandTotal((float)$address->getBaseGrandTotal() - $discountAmount);
-
-                        if ($address->getDiscountDescription()) {
-                            $address->setDiscountAmount(-($address->getDiscountAmount() - $discountAmount));
-                            $address->setDiscountDescription($address->getDiscountDescription() . ', ' . $discountText);
-                            $address->setBaseDiscountAmount(-($address->getBaseDiscountAmount() - $discountAmount));
-
-                            $address->setRefundcreditAmount($refundCredit);
-                            $address->setBaseRefundcreditAmount($refundCredit);
-                            $address->setFeeAmount($fee);
-                            $address->setBaseFeeAmount($fee);
-
-                        } else {
-                            $address->setDiscountAmount(-($discountAmount));
-                            $address->setDiscountDescription($discountText);
-                            $address->setBaseDiscountAmount(-($discountAmount));
-
-                            $address->setRefundcreditAmount($refundCredit);
-                            $address->setBaseRefundcreditAmount($refundCredit);
-                            $address->setFeeAmount($fee);
-                            $address->setBaseFeeAmount($fee);
-                        }
-
-                        $address->save();
-                    }
-
-                }
-
-
-                foreach ($quote->getAllItems() as $item) {
-                    $rat = $item->getPriceInclTax() / $total;
-                    $ratdisc = $discountAmount * $rat;
-                    $item->setDiscountAmount(($item->getDiscountAmount() + $ratdisc) * $item->getQty());
-                    $item->setBaseDiscountAmount(($item->getBaseDiscountAmount() + $ratdisc) * $item->getQty())->save();
-                }
-            }
-        }
-    }
-
-
     public function removeProductExchange($observer)
     {
         $customerId = Mage::getSingleton('customer/session')->getCustomerId();
@@ -150,7 +33,6 @@ class Magestore_Membership_Model_Observer {
             $quote->setStoreId(Mage::app()->getStore()->getStoreId());
         }
         Mage::helper('membership')->updateFeeCart($quote);
-//        $quote->save();
     }
 
     public function after_save_order($observer)
@@ -160,29 +42,69 @@ class Magestore_Membership_Model_Observer {
             Mage::register('check_transaction', '1');
             $order = $observer->getEvent()->getOrder();
             $quoteId = $order->getQuoteId();
+            $customer_id = Mage::getSingleton('customer/session')->getCustomerId();
             $quote = Mage::getModel('sales/quote')->load($quoteId);
             $items = $quote->getAllItems();
+            $refund_credit = 0;
             foreach ($items as $item) {
                 $proExch = $item->getOptionByCode('product_exchange_id');
-                $proBou = $item->getOptionByCode('product_bought_id');
-                $qty = $item->getOptionByCode('qty_exchange');
-                if ($proExch != null && $proExch->getValue() > 0) {
+
+                $discountTransaction = 0;
+                $discount = $item->getOptionByCode('discount');
+                if ($discount != null && $discount->getValue() > 0) {
                     try {
-                        $productExchangeId = $proExch->getValue();
-                        $productBoughtId = $proBou->getValue();
-                        $qtyExchange = $qty->getValue();
-
-                        /*refund product boughts*/
-
-                        /*add transaction
-                         time, detail. order of product bought, order of product exchange*/
+                        $discountTransaction = $discount->getValue();
                     } catch (Exception $e) {
                         Mage::log($e->getMessage(), null, 'membership.log');
                     }
                 }
 
+                $creditTransaction = 0;
+                $credit = $item->getOptionByCode('refund_credit');
+                if ($credit != null && $credit->getValue() > 0) {
+                    try {
+                        $refund_credit += $credit->getValue();
+                        $creditTransaction = $credit->getValue();
+                    } catch (Exception $e) {
+                        Mage::log($e->getMessage(), null, 'membership.log');
+                    }
+                }
+
+                $feeitemTransaction = 0;
+                $feeitem = $item->getOptionByCode('fee');
+                if ($feeitem != null && $feeitem->getValue() > 0) {
+                    try {
+                        $feeitemTransaction = $feeitem->getValue();
+                    } catch (Exception $e) {
+                        Mage::log($e->getMessage(), null, 'membership.log');
+                    }
+                }
+
+                if ($proExch != null && $proExch->getValue() > 0) {
+                    try {
+                        $order_id_old = Mage::helper('membership')->setQtyToExchangeProduct($customer_id,
+                            $item->getOptionByCode('product_bought_id')->getValue(),
+                            $item->getOptionByCode('qty_exchange')->getValue());
+                        Mage::getModel('membership/transaction')->addTransaction($customer_id,
+                            'Qty exchange: ' . $item->getOptionByCode('qty_exchange')->getValue() . ';Fee: ' . $feeitemTransaction . ' ;Discount: ' . $discountTransaction . ' ;Refund credit :' . $creditTransaction,
+                            $item->getOptionByCode('product_bought_id')->getValue(),
+                            implode(",", $order_id_old),
+                            $item->getOptionByCode('product_exchange_id')->getValue(),
+                            $order->getId(),
+                            time());
+
+                    } catch (Exception $e) {
+                        Mage::log($e->getMessage(), null, 'membership.log');
+                    }
+                }
 
             }
+            if ($refund_credit > 0) {
+
+                Mage::getModel('customercredit/transaction')->addTransactionHistory($customer_id, Magestore_Customercredit_Model_TransactionType::TYPE_EXCHANGE_PRODUCT, $refund_credit . " credits received from exchange product in order #" . $order->getIncrementId(), $order->getId(), $refund_credit);
+                Mage::getModel('customercredit/customercredit')->changeCustomerCredit($refund_credit);
+            }
+
         }
     }
 

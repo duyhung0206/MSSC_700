@@ -129,6 +129,19 @@ class Magestore_Membership_Block_Exchangeproduct extends Mage_Core_Block_Templat
         return $groupProduct;
     }
 
+    public function getTransaction()
+    {
+        //get information of the logged-in customer
+        $customer_id = Mage::getSingleton('customer/session')->getCustomerId();
+
+        //get  transaction colletion
+        $transaction_collection = Mage::getModel('membership/transaction')->getCollection()
+            ->addFieldToFilter('customer_id', $customer_id)
+            ->setOrder('transaction_time', 'DESC');
+
+        return $transaction_collection;
+    }
+
     public function isGroupProduct($productId)
     {
         $customer = Mage::getSingleton('customer/session')->getCustomer();
