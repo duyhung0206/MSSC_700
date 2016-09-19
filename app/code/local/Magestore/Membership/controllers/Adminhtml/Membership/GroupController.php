@@ -72,11 +72,28 @@ class Magestore_Membership_Adminhtml_Membership_GroupController extends Mage_Adm
     }
 
     public function saveAction() {
+		
         if ($data = $this->getRequest()->getPost()) {
+				//var_dump($data['groupprice']);die();
+			$collections = Mage::getModel('membership/groupprice')->getCollection()
+								//->addFieldToFilter('group_from', $model->getGroupId());
+								->setOrder('group_from','ASC')	
+								->setOrder('group_to','ASC');
+			$i=0;
+			foreach($collections as $key=>$collection){				
+				if($data['groupprice'][$i] == null)	{
+					$data['groupprice'][$i]=0;
+				}			
+				$collection['price'] = $data['groupprice'][$i];				
+				$i++;
+				$collection->save();
+			 }												
             if (isset($data['group_product'])) {
+				
                 $productIds = array();
                 parse_str($data['group_product'], $productIds);
                 $productIds = array_keys($productIds);
+				
             } else {
                 $productIds = array(0);
             }
@@ -88,7 +105,35 @@ class Magestore_Membership_Adminhtml_Membership_GroupController extends Mage_Adm
             try {
                 $groupModel->save();
                 Mage::helper('membership')->assignProductIdsToGroup($groupModel, $productIds);
-
+				//save data in table membership_group_price
+				$first = Mage::getModel('membership/group')->getCollection()
+								->setOrder('group_id','DESC')
+								->getFirstItem();
+				$id = $first->getGroupId();
+				$models = Mage::getModel('membership/group')->getCollection()
+							->addFieldToFilter('group_id',array('nin'=>$id));
+				$group =  Mage::getModel('membership/groupprice')->getCollection()
+								->addFieldToFilter('group_from',$id)
+								->addFieldToFilter('group_to',$id);
+				if(!count($group)){
+					foreach($models as $model){
+						$groupprice =  Mage::getModel('membership/groupprice');
+						
+						$groupprice->setData('group_from',$model->getGroupId());
+						$groupprice->setData('group_to',$id);					
+						$groupprice->setPrice(0);
+						$groupprice->save();					
+					}
+					$collections = Mage::getModel('membership/group')->getCollection();
+					foreach($collections as $collection){
+						$groupprice =  Mage::getModel('membership/groupprice');					
+						$groupprice->setData('group_to',$collection->getGroupId());
+						$groupprice->setData('group_from',$id);					
+						$groupprice->setPrice(0);
+						$groupprice->save();					
+					}
+				}
+				//end save
                 Mage::getSingleton('adminhtml/session')->addSuccess(Mage::helper('membership')->__('Group was successfully saved'));
                 Mage::getSingleton('adminhtml/session')->setFormData(false);
 

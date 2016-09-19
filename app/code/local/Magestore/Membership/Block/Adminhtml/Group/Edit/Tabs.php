@@ -26,6 +26,12 @@ class Magestore_Membership_Block_Adminhtml_Group_Edit_Tabs extends Mage_Adminhtm
 		  'class'     => 'ajax',      
 	  ));
 	  
+	  $this->addTab('form_product', array(
+          'label'     => Mage::helper('membership')->__('Table Group'),
+          'title'     => Mage::helper('membership')->__('Table Group'),
+          'content'   => $this->getLayout()->createBlock('membership/adminhtml_group_edit_tab_groupprice')->toHtml(),
+      ));
+	  
       return parent::_beforeToHtml();
   }
 }
