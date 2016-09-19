@@ -767,4 +767,47 @@ class Magestore_Membership_Helper_Data extends Mage_Core_Helper_Abstract {
                     ->addFieldToFilter('package_id', $packageId)
                     ->getFirstItem();
     }
+	
+	public function setQtyToExchangeProduct($customerId, $productId, $refund){
+		//$customer_id = Mage::getSingleton('customer/session')->getCustomerId();
+		$refund = 6;
+		$_product = Mage::getModel('catalog/product')->load($productId);
+		$stock = Mage::getModel('cataloginventory/stock_item')->loadByProduct($_product);
+		$qtyOfStock = $stock->getQty();
+		$stock->setQty($qtyOfStock + $refund);		
+		try {
+            $stock->save();
+        } catch (Exception $ex) {
+            $ex->getMessage();
+        }
+		
+		$orderCollection = Mage::getResourceModel('sales/order_collection')
+            ->addFieldToSelect('*')
+            ->addFieldToFilter('customer_id',$customerId)
+			->addFieldToFilter('status','complete')
+            ->setOrder('created_at', 'desc');
+		if(!count($orderCollection))
+			return;
+		foreach ($orderCollection as $order){
+		$orderItems = Mage::getModel('sales/order_item')->getCollection()
+            ->addFieldToFilter('order_id',$order->getId())
+			->addFieldToFilter('product_id',$productId)
+			->setOrder('item_id', 'DESC');
+			
+		foreach ($orderItems as $orderItem){
+			$qtyShip = $orderItem->getQtyShipped();
+			$qtyRefund = $orderItem->getQtyRefunded();
+			if ($qtyShip - $qtyRefund >= $refund ){
+				$orderItem->setQtyRefunded($qtyRefund + $refund);
+				$refund = 0;
+				$orderItem->save();
+				die();
+			}else{
+				$refund = $refund -($qtyShip - $qtyRefund);
+				$orderItem->setQtyRefunded($qtyShip);
+				$orderItem->save();
+			}
+		}  
+	  }	
+	}
 }

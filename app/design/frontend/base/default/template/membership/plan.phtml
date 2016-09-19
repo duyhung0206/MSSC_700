@@ -5,6 +5,7 @@
     <?php
     $payments = $this->getPaymentHistories();
     $member_packages = $this->getMemberPackages();
+	$transactions = $this->getTransaction();
 
     ?>
     <h2 style="float: left"><?php echo $this->__('My Plans') ?></h2>
@@ -108,6 +109,31 @@
                         <td><?php echo $payment->getDuration()?> <?php echo $this->__(''.$payment->getUnitOfTime().'(s)') ?></td>
                         <td><?php echo $this->helper('core')->currency($payment->getPrice())?></td>
                         <td><?php echo $this->getOrderStatus($payment->getOrderId())?></td>
+                    </tr>
+                <?php }?>
+                </tbody>
+            </table>
+        </div>
+    <?php }?>
+	<?php if($transactions->getSize()){?>
+        <h2 style="float: left"><?php echo $this->__('My Transaction') ?></h2>
+        <div class="table-responsive form-group">
+            <table class="packages-table table table-bordered table-hover" id="packages-table">
+                <thead>
+                <tr >
+                    <th class="first"><?php echo $this->__('Date') ?></th>
+                    <th><?php echo $this->__('Product Old') ?></th>
+                    <th><?php echo $this->__('Product New') ?></th>
+                    <th><?php echo $this->__('Detail Transaction') ?></th>              
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach($transactions as $transaction){ ?>
+                    <tr>
+                        <td class="first"><?php echo $this->formatDate($transaction->getTransactionTime(),'short',true) ?></td>
+                        <td><?php echo Mage::getModel('catalog/product')->load($transaction->getProductIdOld())->getName()?></td>
+                        <td><?php echo Mage::getModel('catalog/product')->load($transaction->getProductIdNew())->getName() ?></td>
+                        <td><?php echo $transaction->getDetailTransaction()?></td>                        
                     </tr>
                 <?php }?>
                 </tbody>

@@ -53,7 +53,7 @@
     </crontab>
     <modules>
         <Magestore_Membership>
-            <version>0.1.9</version>
+            <version>0.2.0</version>
         </Magestore_Membership>
     </modules>
     <frontend>
@@ -204,6 +204,9 @@
                     <groupproduct>
                         <table>membership_group_product</table>
                     </groupproduct>
+					<groupprice>
+                        <table>membership_group_price</table>
+                    </groupprice>
                     <package>
                         <table>membership_package</table>
                     </package>
@@ -222,10 +225,12 @@
                     <memberpackage>
                         <table>membership_member_package</table>
                     </memberpackage>
-					
                     <paymenthistory>
                         <table>membership_payment_history</table>
                     </paymenthistory>
+					<transaction>
+                        <table>membership_transaction</table>
+                    </transaction>
                 </entities>
             </membership_mysql4>
             <catalog>

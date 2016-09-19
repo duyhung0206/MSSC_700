@@ -2,18 +2,18 @@
 
 /**
  * Magestore
- *
+ * 
  * NOTICE OF LICENSE
- *
+ * 
  * This source file is subject to the Magestore.com license that is
  * available through the world-wide-web at this URL:
  * http://www.magestore.com/license-agreement.html
- *
+ * 
  * DISCLAIMER
- *
+ * 
  * Do not edit or add to this file if you wish to upgrade this extension to newer
  * version in the future.
- *
+ * 
  * @category    Magestore
  * @package     Magestore_Customercredit
  * @copyright   Copyright (c) 2012 Magestore (http://www.magestore.com/)
@@ -21,26 +21,20 @@
  */
 
 /**
- * Customercredit Status Model
- *
+ * Customercredit Resource Collection Model
+ * 
  * @category    Magestore
  * @package     Magestore_Customercredit
  * @author      Magestore Developer
  */
-class Magestore_Customercredit_Model_TransactionType extends Varien_Object
+class Magestore_Membership_Model_Mysql4_Transaction_Collection extends Mage_Core_Model_Mysql4_Collection_Abstract
 {
 
-    const TYPE_UPDAT_BY_ADMIN = 1;
-    const TYPE_SHARE_CREDIT_TO_FRIENDS = 2;
-    const TYPE_RECEIVE_CREDIT_FROM_FRIENDS = 3;
-    const TYPE_REDEEM_CREDIT = 4;
-    const TYPE_REFUND_ORDER_INTO_CREDIT = 5;
-    const TYPE_CHECK_OUT_BY_CREDIT = 6;
-    const TYPE_CANCEL_SHARE_CREDIT = 7;
-    const TYPE_BUY_CREDIT = 8;
-    const TYPE_CANCEL_ORDER = 9;
-    const TYPE_REFUND_CREDIT_PRODUCT = 10;
-    const TYPE_RENEW_MEMBERSHIP_PACKAGE = 11;
-	const TYPE_EXCHANGE_PRODUCT = 12;
+    public function _construct()
+    {
+        parent::_construct();
+        $this->_init('membership/transaction');
+    }
 
+   
 }
