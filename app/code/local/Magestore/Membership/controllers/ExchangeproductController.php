@@ -14,7 +14,7 @@ class Magestore_Membership_ExchangeproductController extends Mage_Core_Controlle
         $productBoughtId = $data['group-radio-product-boughts'];
         $productExchangeId = $data['group-radio-product-exchange'];
         $maxQtyBought = $data['number-product-bought-' . $productBoughtId];
-        $qtyExchange = 1;
+        $qtyExchange = $data['number-exchange-' . $productExchangeId];;
         $customerId = Mage::getSingleton('customer/session')->getCustomerId();
         if (isset($productBoughtId) && isset($productExchangeId)) {
             if (isset($maxQtyBought) && isset($qtyExchange)) {
@@ -35,9 +35,11 @@ class Magestore_Membership_ExchangeproductController extends Mage_Core_Controlle
                         $proExch = $item->getOptionByCode('product_exchange_id');
                         $proBou = $item->getOptionByCode('product_bought_id');
                         if ($proExch != null && $proExch->getValue() > 0 || $proBou != null && $proBou->getValue() > 0) {
-                            Mage::getSingleton('core/session')->addError(Mage::helper('membership')->__('test'));
-                            $this->_redirect('checkout/cart');
-                            return;
+                            if ($proExch->getValue() == $productExchangeId && $proBou->getValue() == $productBoughtId) {
+                                Mage::getSingleton('core/session')->addError(Mage::helper('membership')->__('test'));
+                                $this->_redirect('checkout/cart');
+                                return;
+                            }
                         }
                     }
                 }
@@ -112,7 +114,7 @@ class Magestore_Membership_ExchangeproductController extends Mage_Core_Controlle
                     $quoteItem->addOption(array(
                         'label' => 'Fee Exchange',
                         'code' => 'fee',
-                        'value' => $fee,
+                        'value' => $fee * $qtyExchange,
                     ));
 
                     $quoteItem->setQty($qtyExchange);

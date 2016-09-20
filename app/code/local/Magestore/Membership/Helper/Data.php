@@ -40,7 +40,6 @@ class Magestore_Membership_Helper_Data extends Mage_Core_Helper_Abstract {
              }
 
          }
-         $discountText = Mage::helper('membership')->__('Discount exchange product');
 
          if ($quoteid && ($discountAmount > 0 || $fee >0 || $refundCredit >0)) {
 
@@ -90,6 +89,7 @@ class Magestore_Membership_Helper_Data extends Mage_Core_Helper_Abstract {
                              $address->setBaseRefundcreditAmount($refundCredit);
                              $address->setFeeAmount($fee);
                              $address->setBaseFeeAmount($fee);
+
 
                          } else {
 

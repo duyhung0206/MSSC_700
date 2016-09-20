@@ -38,12 +38,16 @@ class Magestore_Membership_Model_Sales_Order_Creditmemo_Discount extends Mage_Sa
             $orderItem = $item->getOrderItem();
             if ($orderItem->isDummy())
                 continue;
-            die($discount);
-            $discount += (float)$orderItem->getDiscountexchangeAmount();
-            $basediscount += (float)$orderItem->getBaseDiscountexchangeAmount();
+
+            $discountitem = Mage::getModel('sales/quote_item_option')->getCollection()
+                ->addFieldToFilter('item_id', $orderItem->getQuoteItemId())
+                ->addFieldToFilter('code', 'discount')->getFirstItem()->getValue();
+            $qty = Mage::getModel('sales/quote_item_option')->getCollection()
+                ->addFieldToFilter('item_id', $orderItem->getQuoteItemId())
+                ->addFieldToFilter('code', 'qty_exchange')->getFirstItem()->getValue();
+            $discount += $discountitem / $qty * $item->getQty();
         }
-        $discount = $creditmemo->getOrder()->getDiscountexchangeAmount();
-        $basediscount = $creditmemo->getOrder()->getBaseDiscountexchangeAmount();
+        $basediscount = $discount;
 
         $creditmemo->setDiscountexchangeAmount($discount);
         $creditmemo->setBaseDiscountexchangeAmount($basediscount);

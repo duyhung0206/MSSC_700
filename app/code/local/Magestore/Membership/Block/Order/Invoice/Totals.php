@@ -38,19 +38,19 @@ class Magestore_Membership_Block_Order_Invoice_Totals extends Mage_Core_Block_Te
         $totalsBlock->addTotal(new Varien_Object(array(
             'code' => 'discount_amount',
             'label' => $this->helper('customercredit')->__('Discount exchange'),
-            'value' => -$order->getDiscountexchangeAmount(),
-            'base_value' => -$order->getBaseDiscountexchangeAmount(),
+            'value' => -$invoice->getDiscountexchangeAmount(),
+            'base_value' => -$invoice->getBaseDiscountexchangeAmount(),
         )), 'subtotal');
         $totalsBlock->addTotal(new Varien_Object(array(
             'code' => 'fee',
-            'value' => $order->getFeeAmount(),
-            'base_value' => $order->getBaseFeeAmount(),
+            'value' => $invoice->getFeeAmount(),
+            'base_value' => $invoice->getBaseFeeAmount(),
             'label' => 'Fee',
         )), 'subtotal');
         $totalsBlock->addTotal(new Varien_Object(array(
             'code' => 'refund_credit',
-            'value' => $order->getRefundcreditAmount(),
-            'base_value' => $order->getBaseRefundcreditAmount(),
+            'value' => $invoice->getRefundcreditAmount(),
+            'base_value' => $invoice->getBaseRefundcreditAmount(),
             'label' => 'Refund credit',
         )), 'subtotal');
 

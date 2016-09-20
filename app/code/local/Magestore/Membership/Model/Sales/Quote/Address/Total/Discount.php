@@ -15,7 +15,6 @@ class Magestore_Membership_Model_Sales_Quote_Address_Total_Discount extends Mage
         if (!count($items)) {
             return $this;
         }
-
         $address->setGrandTotal($address->getGrandTotal() - $address->getDiscountexchangeAmount());
         $address->setBaseGrandTotal($address->getBaseGrandTotal() - $address->getBaseDiscountexchangeAmount());
 

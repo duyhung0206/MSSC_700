@@ -2,6 +2,18 @@
 
 class Magestore_Membership_Model_Observer {
 
+    public function sales_order_invoice_save_after($observer)
+    {
+        $invoice = $observer->getEvent()->getInvoice();
+        $order = Mage::getModel('sales/order')->load($invoice->getOrderId());
+        $customerId = $order->getCustomerId();
+
+        if ($invoice->getRefundcreditAmount() > 0) {
+            $refund_credit = $invoice->getRefundcreditAmount();
+            Mage::getModel('customercredit/transaction')->addTransactionHistory($customerId, Magestore_Customercredit_Model_TransactionType::TYPE_EXCHANGE_PRODUCT, $refund_credit . " credits received from exchange product in order #" . $order->getIncrementId(), $order->getId(), $refund_credit);
+            Mage::getModel('customercredit/customercredit')->changeCustomerCredit($refund_credit, $customerId);
+        }
+    }
 
     public function quote_item_save_before($observer)
     {
@@ -99,11 +111,7 @@ class Magestore_Membership_Model_Observer {
                 }
 
             }
-            if ($refund_credit > 0) {
 
-                Mage::getModel('customercredit/transaction')->addTransactionHistory($customer_id, Magestore_Customercredit_Model_TransactionType::TYPE_EXCHANGE_PRODUCT, $refund_credit . " credits received from exchange product in order #" . $order->getIncrementId(), $order->getId(), $refund_credit);
-                Mage::getModel('customercredit/customercredit')->changeCustomerCredit($refund_credit);
-            }
 
         }
     }

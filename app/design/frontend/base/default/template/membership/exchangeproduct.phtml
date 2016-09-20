@@ -6,150 +6,123 @@
     $listProductBoughts = $this->getListProductBoughtsCanExchange();
     $listGroupProductExchanges = $this->getGroupProductExchange();
     $transactions = $this->getTransaction();
+    foreach (array_keys($listProductBoughts) as $productId) {
+        if (!$this->isGroupProduct($productId)) {
+            unset($listProductBoughts[$productId]);
+        }
+    }
     ?>
     <h2><?php echo $this->__('My exchange') ?></h2>
-    <?php if (!count($listProductBoughts)) { ?>
+    <?php if (!count($listProductBoughts) || !count($listGroupProductExchanges)) { ?>
         <p class="note-msg"><?php echo $this->__('You dont not product to exchange.') ?></p>
     <?php } else {
         ?>
         <form action="<?php echo $this->getExchangeProduct() ?>" method="post">
-            <button type="submit">TEST</button>
-            <div class="table-responsive form-group">
-                <table class="packages-table table table-bordered table-hover" id="myplan-table">
-                    <thead>
-                    <tr>
-                        <th class="first"><?php echo $this->__('Product boughts') ?></th>
-                        <th><?php echo $this->__('Product exchange') ?></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td class="first col-sm-5 col-xs-5 col-tn-5">
-                            <?php foreach (array_keys($listProductBoughts) as $productId): ?>
-                                <?php $listProductBought = $this->getProduct($productId);
-                                if (!$this->isGroupProduct($listProductBought->getId()))
-                                    continue;
-                                ?>
-                                <div class="row">
-                                    <div class="f-product col-sm-12 col-xs-12 col-tn-12">
-                                        <input type="radio" name="group-radio-product-boughts"
-                                               value="<?php echo $listProductBought->getId() ?>">
-                                        <input type="text" style="display: none"
-                                               name="number-product-bought-<?php echo $listProductBought->getId() ?>"
-                                               value="<?php echo $listProductBoughts[$listProductBought->getId()] ?>">
+            <button type="submit" id="submit-exchange">Exchange product</button>
+            <div class="row">
+                <h4 class="my-title-exchange"><?php echo $this->__('Product boughts') ?></h4>
+                <div id="owl-bought" class="owl-carousel owl-theme">
+                    <?php foreach (array_keys($listProductBoughts) as $productId): ?>
+                        <?php $listProductBought = $this->getProduct($productId);
+                        if (!$this->isGroupProduct($listProductBought->getId()))
+                            continue;
+                        ?>
+                        <div class="item">
+                            <div class="f-product">
+                                <input type="radio" name="group-radio-product-boughts"
+                                       value="<?php echo $listProductBought->getId() ?>">
+                                <input type="text" style="display: none"
+                                       name="number-product-bought-<?php echo $listProductBought->getId() ?>"
+                                       value="<?php echo $listProductBoughts[$listProductBought->getId()] ?>">
 
+                                <a class="product-image text-center"
+                                   href="javascript:checkradiobox(<?php echo $listProductBought->getId() ?>);">
+                                    <?php $_imgHtml = '';
+                                    if ($listProductBought->getSmallImage()) {
+                                        $_imgHtml = '<img style="margin:auto" src="' . $this->helper("catalog/image")->init($listProductBought, "small_image")->resize(80) . '" width="80" height="80" alt="' . $this->stripTags($this->getImageLabel($listProductBought, "small_image"), null, true) . '" />';
+                                    } else {
+                                        $_imgHtml = '<img style="margin:auto" src="' . Mage::getBaseUrl("media") . 'megamenu/sample_data/small_image.jpg" alt="' . $this->stripTags($listProductBought->getName(), null, true) . '" title="' . $this->stripTags($listProductBought->getName(), null, true) . '"/>';
+                                    }
+                                    echo $_imgHtml;
+                                    ?>
+                                </a>
+                                <a class="product-name" style="text-align: center"
+                                   href="<?php echo $listProductBought->getProductUrl(); ?>"><strong><?php echo $listProductBought->getName(); ?></strong>
+                                </a>
+                                <p>
+                                    <?php echo $this->__('Group product: ') . $this->isGroupProduct($listProductBought->getId()); ?>
+
+                                </p>
+                                <p> <?php echo $this->__('Price: ') . Mage::helper('membership')->getDiscountPrice(null, $listProductBought->getId()); ?>
+                                </p>
+                                <p>
+                                    <?php echo $this->__('Qty can exchange: ') . $listProductBoughts[$listProductBought->getId()]; ?>
+
+                                </p>
+
+
+                                </div>
+
+
+                        </div>
+
+
+                    <?php endforeach; ?>
+                </div>
+            </div>
+            <div class="row" style="margin-top: 10px">
+                <h4 class="my-title-exchange"><?php echo $this->__('Product exchange') ?></h4>
+                <div class="row group-product-exchange">
+                    <?php $listGroup = array_keys($listGroupProductExchanges);
+                    foreach ($listGroup as $groupId) { ?>
+                        <?php $listproduct = $listGroupProductExchanges[$groupId];
+                        ?>
+                        <p>
+                            <?php echo $this->__('Group product: ') . Mage::getModel('membership/group')->load($groupId)->getGroupName(); ?>
+                        </p>
+                        <div id="owl-exchange-<?php echo $groupId ?>" class="owl-carousel owl-theme">
+
+                            <?php
+                            foreach ($listproduct as $productExchange):
+                                $productExchange = $this->getProduct($productExchange); ?>
+                                <div class="item">
+                                    <div class="f-product">
+                                        <input type="radio" name="group-radio-product-exchange"
+                                               value="<?php echo $productExchange->getId() ?>">
                                         <a class="product-image text-center"
-                                           href="javascript:checkradiobox(<?php echo $listProductBought->getId() ?>);">
+                                           href="javascript:checkradioboxexchange(<?php echo $productExchange->getId() ?>);">
                                             <?php $_imgHtml = '';
-                                            if ($listProductBought->getSmallImage()) {
-                                                $_imgHtml = '<img src="' . $this->helper("catalog/image")->init($listProductBought, "small_image")->resize(100) . '" width="100" height="100" alt="' . $this->stripTags($this->getImageLabel($listProductBought, "small_image"), null, true) . '" />';
+                                            if ($productExchange->getSmallImage()) {
+                                                $_imgHtml = '<img style="margin: auto" src="' . $this->helper("catalog/image")->init($productExchange, "small_image")->resize(80) . '" width="80" height="80" alt="' . $this->stripTags($this->getImageLabel($productExchange, "small_image"), null, true) . '" />';
                                             } else {
-                                                $_imgHtml = '<img src="' . Mage::getBaseUrl("media") . 'megamenu/sample_data/small_image.jpg" alt="' . $this->stripTags($listProductBought->getName(), null, true) . '" title="' . $this->stripTags($listProductBought->getName(), null, true) . '"/>';
+                                                $_imgHtml = '<img style="margin: auto" src="' . Mage::getBaseUrl("media") . 'megamenu/sample_data/small_image.jpg" alt="' . $this->stripTags($productExchange->getName(), null, true) . '" title="' . $this->stripTags($productExchange->getName(), null, true) . '"/>';
                                             }
                                             echo $_imgHtml;
                                             ?>
                                         </a>
-                                        <table class="product-info-exchange">
-                                            <tbody>
-                                            <tr>
-                                                <td><a class="product-name" style="text-align: center"
-                                                       href="<?php echo $listProductBought->getProductUrl(); ?>"><strong><?php echo $listProductBought->getName(); ?></strong>
-                                                    </a>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <?php echo $this->__('Group product: ') . $this->isGroupProduct($listProductBought->getId()); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <?php echo $this->__('Price: ') . Mage::helper('membership')->getDiscountPrice(null, $listProductBought->getId()); ?>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>
-                                                    <?php echo $this->__('Qty can exchange: ') . $listProductBoughts[$listProductBought->getId()]; ?>
-                                                </td>
-                                            </tr>
-                                            </tbody>
-                                        </table>
+                                        <a class="product-name" style="text-align: center"
+                                           href="<?php echo $productExchange->getProductUrl(); ?>"><strong><?php echo $productExchange->getName(); ?></strong>
+                                        </a>
+                                        <p><?php echo $this->__('Price: ') . Mage::helper('membership')->getDiscountPrice(null, $productExchange->getId()); ?>
+                                        </p><input type="text"
+                                                   name="number-exchange-<?php echo $productExchange->getId() ?>"
+                                                   placeholder="Qty exchange">
+
+
                                     </div>
+
+
                                 </div>
                             <?php endforeach; ?>
-                        </td>
-                        <td class="col-sm-7 col-xs-7 col-tn-7">
-                            <?php $listGroup = array_keys($listGroupProductExchanges);
-                            foreach ($listGroup as $groupId) { ?>
 
-                                <?php $listproduct = $listGroupProductExchanges[$groupId];
-                                ?>
-                                <div class="col-sm-12 col-xs-12 col-tn-12">
-                                    <h2>
-                                        <?php echo $groupId; ?>
-                                    </h2>
-                                    <?php $i = 1;
-                                    foreach ($listproduct as $productExchange):
-                                        $productExchange = $this->getProduct($productExchange); ?>
+                        </div>
+                    <?php } ?>
+                </div>
 
-                                        <div class="row">
-                                            <div class="f-product col-sm-12 col-xs-12 col-tn-12">
-                                                <input type="radio" name="group-radio-product-exchange"
-                                                       value="<?php echo $productExchange->getId() ?>">
-                                                <a class="product-image text-center"
-                                                   href="javascript:checkradioboxexchange(<?php echo $productExchange->getId() ?>);">
-                                                    <?php $_imgHtml = '';
-                                                    if ($productExchange->getSmallImage()) {
-                                                        $_imgHtml = '<img src="' . $this->helper("catalog/image")->init($productExchange, "small_image")->resize(100) . '" width="100" height="100" alt="' . $this->stripTags($this->getImageLabel($productExchange, "small_image"), null, true) . '" />';
-                                                    } else {
-                                                        $_imgHtml = '<img src="' . Mage::getBaseUrl("media") . 'megamenu/sample_data/small_image.jpg" alt="' . $this->stripTags($productExchange->getName(), null, true) . '" title="' . $this->stripTags($productExchange->getName(), null, true) . '"/>';
-                                                    }
-                                                    echo $_imgHtml;
-                                                    ?>
-                                                </a>
-
-                                                <table class="product-info-exchange">
-                                                    <tbody>
-                                                    <tr>
-                                                        <td><a class="product-name" style="text-align: center"
-                                                               href="<?php echo $productExchange->getProductUrl(); ?>"><strong><?php echo $productExchange->getName(); ?></strong>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <?php echo $this->__('Group product: ') . $this->isGroupProduct($productExchange->getId()); ?>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <?php echo $this->__('Price: ') . Mage::helper('membership')->getDiscountPrice(null, $productExchange->getId()); ?>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <input type="text"
-                                                                   name="number-exchange-<?php echo $productExchange->getId() ?>">
-                                                        </td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <?php $i++; endforeach; ?>
-                                </div>
-
-
-                            <?php } ?>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
             </div>
         </form>
     <?php } ?>
-
-    <h2><?php echo $this->__('My Transaction') ?></h2>
+    <h2 style="margin-top: 40px"><?php echo $this->__('My Transaction') ?></h2>
     <?php if (!count($transactions)) { ?>
         <p class="note-msg"><?php echo $this->__('You dont not transaction') ?></p>
     <?php } else {
@@ -157,12 +130,13 @@
         <div class="table-responsive form-group">
             <table class="packages-table table table-bordered table-hover" id="packages-table">
                 <thead>
-                <tr>
-                    <th class="first"><?php echo $this->__('Date') ?></th>
-                    <th><?php echo $this->__('Product Old') ?></th>
-                    <th><?php echo $this->__('Product New') ?></th>
-                    <th><?php echo $this->__('Detail Transaction') ?></th>
-                </tr>
+                    <tr>
+                        <th class="first"><?php echo $this->__('Date') ?></th>
+                        <th><?php echo $this->__('Product Old') ?></th>
+                        <th><?php echo $this->__('Product New') ?></th>
+                        <th><?php echo $this->__('Detail Transaction') ?></th>
+                        <th><?php echo $this->__('Order exchange') ?></th>
+                    </tr>
                 </thead>
                 <tbody>
                 <?php foreach ($transactions as $transaction) { ?>
@@ -171,16 +145,38 @@
                         <td><?php echo Mage::getModel('catalog/product')->load($transaction->getProductIdOld())->getName() ?></td>
                         <td><?php echo Mage::getModel('catalog/product')->load($transaction->getProductIdNew())->getName() ?></td>
                         <td><?php echo $transaction->getDetailTransaction() ?></td>
+                        <td><?php echo $this->getNameOrderExchange($transaction->getOrderIdNew()) ?></td>
                     </tr>
                 <?php } ?>
                 </tbody>
             </table>
         </div>
     <?php } ?>
+
 </div>
 
 
 <script>
+    jQuery(document).ready(function () {
+        <?php $listGroup = array_keys($listGroupProductExchanges);
+        foreach ($listGroup as $groupId) { ?>
+
+
+        jQuery("#owl-exchange-<?php echo $groupId?>").owlCarousel({
+            items: 5,
+            navigation: true
+
+        });
+
+
+        <?php }?>
+        jQuery("#owl-bought").owlCarousel({
+            items: 5,
+            navigation: true
+
+        });
+
+    });
     function checkradiobox(productId) {
 
         var checked = $$('input[name="group-radio-product-boughts"][value=' + productId + ']')[0].checked;
@@ -200,47 +196,53 @@
         }
 
     }
-    jQuery(document).ready(function () {
-        jQuery("#owl-demo-2").owlCarousel({
-            items: 2,
-            navigation: true
-        });
-        jQuery("#owl-demo-1").owlCarousel({
-            items: 2,
-            navigation: true
-        });
-
-        jQuery('div.row a').css('float', 'left');
-        jQuery('div.row input[type="radio"]').css('float', 'left');
-    });
-
 
 </script>
 <style>
-    .product-info-exchange {
-        margin-left: 2px;
-    }
-
-    a.product-image.text-center {
-        margin-right: 10px;
-        margin-left: 10px;
-    }
-
-    .table-exchange-product {
-        width: 100%;
-    }
-
-    table.table-exchange-product td a {
-        float: none !important;
+    .owl-carousel.owl-theme .item {
+        padding: 5px 0px;
+        margin: 5px;
+        color: #FFF;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
         text-align: center;
     }
 
-    table.table-exchange-product td {
-        text-align: center;
+    .owl-carousel.owl-theme .item p {
+        color: #000000;
     }
 
-    .table-exchange-product a img {
-        margin-left: auto;
-        margin-right: auto;
+    .my-title-exchange {
+        border-bottom: 1px solid #ededed;
+        width: 50%;
+    }
+
+    .row {
+        padding: 0 10px;
+    }
+
+    div.row.group-product-exchange {
+        overflow-x: hidden;
+        max-height: 260px;
+    }
+
+    #submit-exchange {
+        background-color: #94c651;
+        float: right;
+        font-size: 13px;
+        border-radius: 3px;
+        text-decoration: none;
+        display: inline-block;
+        padding: 7px 15px;
+        border: 0;
+        color: #FFF;
+        font-weight: normal;
+        font-family: "Raleway", "Helvetica Neue", Verdana, Arial, sans-serif;
+        line-height: 19px;
+        text-align: center;
+        text-transform: uppercase;
+        vertical-align: middle;
+        white-space: nowrap;
     }
 </style>

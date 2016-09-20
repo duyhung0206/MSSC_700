@@ -38,16 +38,16 @@ class Magestore_Membership_Model_Sales_Order_Invoice_Discount extends Mage_Sales
             $orderItem = $item->getOrderItem();
             if ($orderItem->isDummy())
                 continue;
-//            $discount += (float)$orderItem->getDiscountexchangeAmount();
-//            $basediscount += (float)$orderItem->getBaseDiscountexchangeAmount();
 
-
-//            $quoteItem = Mage::getModel('sales/quote_item')->load($orderItem->getQuoteItemId());
-            Zend_debug::dump($item->getData());
-            Zend_debug::dump($orderItem->getData());
+            $discountitem = Mage::getModel('sales/quote_item_option')->getCollection()
+                ->addFieldToFilter('item_id', $orderItem->getQuoteItemId())
+                ->addFieldToFilter('code', 'discount')->getFirstItem()->getValue();
+            $qty = Mage::getModel('sales/quote_item_option')->getCollection()
+                ->addFieldToFilter('item_id', $orderItem->getQuoteItemId())
+                ->addFieldToFilter('code', 'qty_exchange')->getFirstItem()->getValue();
+            $discount += $discountitem / $qty * $item->getQty();
         }
-//        $discount = $invoice->getOrder()->getDiscountexchangeAmount();
-//        $basediscount = $invoice->getOrder()->getBaseDiscountexchangeAmount();
+        $basediscount = $discount;
 
         $invoice->setDiscountexchangeAmount($discount);
         $invoice->setBaseDiscountexchangeAmount($basediscount);

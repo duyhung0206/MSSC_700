@@ -9,6 +9,11 @@ class Magestore_Membership_Block_Exchangeproduct extends Mage_Core_Block_Templat
         $this->setPackages($this->getMyPackages());
     }
 
+    public function getNameOrderExchange($orderId)
+    {
+        $order = Mage::getModel('sales/order')->load($orderId);
+        return "#" . $order->getIncrementId();
+    }
     public function _prepareLayout()
     {
         $headBlock = $this->getLayout()->getBlock('head');

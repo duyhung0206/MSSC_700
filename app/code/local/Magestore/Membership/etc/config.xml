@@ -223,9 +223,9 @@
                     <magestore_membership_discountexchange>
                         <class>membership/sales_order_creditmemo_discount</class>
                     </magestore_membership_discountexchange>
-                    <magestore_membership_refundcredit>
-                        <class>membership/sales_order_creditmemo_refundcredit</class>
-                    </magestore_membership_refundcredit>
+                    <!-- <magestore_membership_refundcredit>
+                         <class>membership/sales_order_creditmemo_refundcredit</class>
+                     </magestore_membership_refundcredit>-->
                 </totals>
             </order_creditmemo>
             <quote>
@@ -303,6 +303,17 @@
             </quote>
         </sales>
         <events>
+            <sales_order_invoice_save_after>
+                <observers>
+                    <magestore_membership_observer>
+                        <type>singleton</type>
+                        <class>membership/observer</class>
+                        <method>sales_order_invoice_save_after</method>
+                    </magestore_membership_observer>
+                </observers>
+            </sales_order_invoice_save_after>
+
+
             <core_block_abstract_prepare_layout_before>
                 <observers>
                     <magestore_membership_observer>

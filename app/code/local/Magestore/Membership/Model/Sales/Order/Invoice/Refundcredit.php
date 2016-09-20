@@ -32,11 +32,24 @@ class Magestore_Membership_Model_Sales_Order_Invoice_Refundcredit extends Mage_S
 
     public function collect(Mage_Sales_Model_Order_Invoice $invoice)
     {
-        $refund = $invoice->getOrder()->getRefundcreditAmount();
-        $baserefund = $invoice->getOrder()->getBaseRefundcreditAmount();
+        $refundcredit = 0;
+        $baserefundcredit = 0;
+        foreach ($invoice->getAllItems() as $item) {
+            $orderItem = $item->getOrderItem();
+            if ($orderItem->isDummy())
+                continue;
 
-        $invoice->getRefundcreditAmount($refund);
-        $invoice->getBaseRefundcreditAmount($baserefund);
+            $refundcredititem = Mage::getModel('sales/quote_item_option')->getCollection()
+                ->addFieldToFilter('item_id', $orderItem->getQuoteItemId())
+                ->addFieldToFilter('code', 'refund_credit')->getFirstItem()->getValue();
+            $qty = Mage::getModel('sales/quote_item_option')->getCollection()
+                ->addFieldToFilter('item_id', $orderItem->getQuoteItemId())
+                ->addFieldToFilter('code', 'qty_exchange')->getFirstItem()->getValue();
+            $refundcredit += $refundcredititem / $qty * $item->getQty();
+        }
+        $baserefundcredit = $refundcredit;
+        $invoice->setRefundcreditAmount($refundcredit);
+        $invoice->setBaseRefundcreditAmount($baserefundcredit);
 
         $invoice->setGrandTotal($invoice->getGrandTotal());
         $invoice->setBaseGrandTotal($invoice->getBaseGrandTotal());

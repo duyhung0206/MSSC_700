@@ -5,7 +5,6 @@
     <?php
     $payments = $this->getPaymentHistories();
     $member_packages = $this->getMemberPackages();
-	$transactions = $this->getTransaction();
 
     ?>
     <h2 style="float: left"><?php echo $this->__('My Plans') ?></h2>
@@ -115,10 +114,7 @@
             </table>
         </div>
     <?php }?>
-	<?php if($transactions->getSize()){?>
-        <h2 style="float: left"><?php echo $this->__('My Transaction') ?></h2>
-
-    <?php }?>
+	
 </div>
 <script type="text/javascript">
     decorateTable('packages-table');

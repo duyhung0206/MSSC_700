@@ -32,9 +32,22 @@ class Magestore_Membership_Model_Sales_Order_Creditmemo_Fee extends Mage_Sales_M
 
     public function collect(Mage_Sales_Model_Order_Creditmemo $creditmemo)
     {
-        $fee = $creditmemo->getOrder()->getFeeAmount();
-        $basefee = $creditmemo->getOrder()->getBaseFeeAmount();
-//        var_dump($fee);
+        $fee = 0;
+        $basefee = 0;
+        foreach ($creditmemo->getAllItems() as $item) {
+            $orderItem = $item->getOrderItem();
+            if ($orderItem->isDummy())
+                continue;
+
+            $feeitem = Mage::getModel('sales/quote_item_option')->getCollection()
+                ->addFieldToFilter('item_id', $orderItem->getQuoteItemId())
+                ->addFieldToFilter('code', 'fee')->getFirstItem()->getValue();
+            $qty = Mage::getModel('sales/quote_item_option')->getCollection()
+                ->addFieldToFilter('item_id', $orderItem->getQuoteItemId())
+                ->addFieldToFilter('code', 'qty_exchange')->getFirstItem()->getValue();
+            $fee += $feeitem / $qty * $item->getQty();
+        }
+        $basefee = $fee;
 
         $creditmemo->setFeeAmount($fee);
         $creditmemo->setBaseFeeAmount($basefee);
