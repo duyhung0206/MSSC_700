@@ -123,7 +123,6 @@ class Magestore_Membership_ExchangeproductController extends Mage_Core_Controlle
                     $quote->addItem($quoteItem);
                     Mage::helper('membership')->updateFeeCart($quote);
                     $quote->collectTotals();
-//                    $quote->setTotalsCollectedFlag(false)->collectTotals();
                     $quote->save();
 
                     Mage::getSingleton('core/session')->addSuccess(Mage::helper('membership')->__('Check out success !'));

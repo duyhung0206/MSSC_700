@@ -49,20 +49,29 @@ class Magestore_Membership_Block_Adminhtml_Group_Edit_Tab_Product extends Mage_A
 		//$productIds = Mage::getModel('membership/groupproduct')->getCollection();
 		// $groupId = Mage::getModel('membership/groupproduct')->getCollection()
 					// ->addFieldToFilter('group_status', 1)
-					
-		$options = Mage::getModel('membership/groupproduct')->getCollection();
 
+        $groups = Mage::getModel('membership/groupproduct')->getCollection()
+            ->addFieldToFilter('group_id', array('nin'=>$this->getRequest()->getParam('id')));
+
+        $options = Mage::getModel('membership/groupproduct')->getCollection();
         $option_product_ids = array();
-
-        if (count($options)) {
-			
-            foreach ($options as $option) {
-                $option_product_ids[] = $option->getProductId();
+        if(!$this->getRequest()->getParam('id')){
+            if (count($options)) {
+                foreach ($options as $option) {
+                    $option_product_ids[] = $option->getProductId();
+                }
             }
+            if (count($option_product_ids))
+                $collection->addFieldToFilter('entity_id', array('nin' => $option_product_ids));
+        }else{
+            if (count($groups)) {
+                foreach ($groups as $group) {
+                    $option_product_ids[] = $group->getProductId();
+                }
+            }
+            if (count($option_product_ids))
+                $collection->addFieldToFilter('entity_id', array('nin' => $option_product_ids));
         }
-        if (count($option_product_ids) && !$this->getRequest()->getParam('id'))
-            $collection->addFieldToFilter('entity_id', array('nin' => $option_product_ids));
-
         $this->setCollection($collection);
 
         return parent::_prepareCollection();
