@@ -21,6 +21,16 @@
         </reference>
     </default>
 
+
+    <catalog_category_layered>
+        <reference name="product_list">
+            <action method="setTemplate">
+                <template>membership/catalog/product/list.phtml</template>
+            </action>
+        </reference>
+    </catalog_category_layered>
+
+
     <membership_index_blockaccount>
         <reference name="content">
             <block type="membership/membership" name="membership.blockaccount" template="membership/blockaccount.phtml"/>

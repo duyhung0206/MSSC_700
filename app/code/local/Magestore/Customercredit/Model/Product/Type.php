@@ -111,10 +111,10 @@ class Magestore_CustomerCredit_Model_Product_Type extends Mage_Catalog_Model_Pro
                     $fnPrice = $creditAmount['credit_price'];
                     break;
                 default:
-                    return Mage::helper('customercredit')->__('Please enter Store Credit information.');
+                    return Mage::helper('customercredit')->__('Please enter Store Credit information. 11');
             }
         } else
-            return Mage::helper('customercredit')->__('Please enter Store Credit information.');
+            return Mage::helper('customercredit')->__('Please enter Store Credit information. 222');
 
         $buyRequest->setAmount($amount);
         $product->addCustomOption('credit_price_amount', $fnPrice);

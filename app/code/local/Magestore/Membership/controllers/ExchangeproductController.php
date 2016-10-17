@@ -56,6 +56,7 @@ class Magestore_Membership_ExchangeproductController extends Mage_Core_Controlle
                     $quoteItem = Mage::getModel('sales/quote_item')->setProduct($productExchange);
                     Mage::getSingleton('checkout/session')->setCartWasUpdated(true);
 
+                    
                     $quoteItem->setStoreId($storeId);
                     $quoteItem->setCustomPrice($qtyExchange * $priceExchange);
                     $quoteItem->setOriginalCustomPrice($priceExchange);

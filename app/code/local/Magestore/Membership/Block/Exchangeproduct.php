@@ -109,7 +109,7 @@ class Magestore_Membership_Block_Exchangeproduct extends Mage_Core_Block_Templat
         $customerId = $customer->getId();
         $collection = Mage::helper('membership')->isGroupDiscount($customerId, null);
         $groupProduct = array();
-        if (!count($collection->getData()))
+        if (!$collection)
             return $groupProduct;
         foreach ($collection->getData() as $item) {
             $store = Mage::app()->getStore();

@@ -58,6 +58,15 @@
     </modules>
     <frontend>
         <events>
+            <checkout_cart_product_add_after>
+                <observers>
+                    <magestore_membership_observer>
+                        <type>singleton</type>
+                        <class>membership/observer</class>
+                        <method>checkout_cart_product_add_after</method>
+                    </magestore_membership_observer>
+                </observers>
+            </checkout_cart_product_add_after>
             <controller_action_predispatch>
                 <observers>
                     <magestore_membership_observer>
@@ -178,6 +187,17 @@
         </translate>			
     </adminhtml>   
     <global>
+        <pdf>
+            <totals>
+                <exchange_product>
+                    <title>Exchange product</title>
+                    <model>membership/pdf</model>
+                    <font_size>7</font_size>
+                    <display_zero>1</display_zero>
+                    <sort_order>201</sort_order>
+                </exchange_product>
+            </totals>
+        </pdf>
         <fieldsets>
             <sales_convert_quote_address>
                 <fee_amount>
@@ -380,6 +400,19 @@
 
         </events>
         <models>
+            <sales>
+                <rewrite>
+                    <order_pdf_items_creditmemo_default>Magestore_Membership_Model_Order_Pdf_Items_Creditmemo_Default</order_pdf_items_creditmemo_default>
+                    <order_pdf_items_invoice_default>Magestore_Membership_Model_Order_Pdf_Items_Invoice_Default</order_pdf_items_invoice_default>
+                    <order_pdf_items_shipment_default>Magestore_Membership_Model_Order_Pdf_Items_Shipment_Default</order_pdf_items_shipment_default>
+                </rewrite>
+            </sales>
+
+            <sales>
+                <rewrite>
+                    <order_pdf_items_creditmemo_default>Magestore_Membership_Model_Order_Pdf_Items_Creditmemo_Default</order_pdf_items_creditmemo_default>
+                </rewrite>
+            </sales>
             <membership>
                 <class>Magestore_Membership_Model</class>
                 <resourceModel>membership_mysql4</resourceModel>

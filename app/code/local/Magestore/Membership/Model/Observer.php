@@ -2,6 +2,36 @@
 
 class Magestore_Membership_Model_Observer {
 
+    public function checkout_cart_product_add_after($observer){
+
+        $quote = Mage::getSingleton('checkout/session')->getQuote();
+
+        $quoteItem = $observer->getQuoteItem();
+
+        $quote->removeItem($quoteItem->getId())->save();
+//        die();
+     return $this;
+        $customerId = Mage::getSingleton('customer/session')->getCustomerId();
+        $memberId = Mage::helper('membership')->getMemberId($customerId);
+        if (!$memberId){
+
+            $quote->removeItem($quoteItem->getId())->save();
+            Mage::getSingleton('core/session')->addError(Mage::helper('membership')->__('11You can by membership product'));
+        }else{
+            Mage::helper('membership')->setStatusMemberPackage($memberId);
+            $collection = Mage::getModel('membership/memberpackage')->getCollection()
+                ->addFieldToFilter('member_id', $memberId)
+                ->addFieldToFilter('status', 1)
+                ->addFieldToFilter('end_time', array('datetime' => true, 'from' => now()));
+            if (!count($collection)){
+                Mage::getSingleton('core/session')->addError(Mage::helper('membership')->__('22You can by membership product'));
+                $quote->removeItem($quoteItem->getId())->save();
+                return $this;
+            }
+
+        }
+
+    }
     public function sales_order_invoice_save_after($observer)
     {
         $invoice = $observer->getEvent()->getInvoice();
@@ -448,7 +478,7 @@ class Magestore_Membership_Model_Observer {
                 $order->getId(),
                 -$order->getGrandTotal());
             //Sub customer credit
-            Mage::getModel('customercredit/customercredit')->changeCustomerCredit(-$order->getGrandTotal());
+            Mage::getModel('customercredit/customercredit')->changeCustomerCredit(-$order->getGrandTotal(),$customer_id);
 
             $invoice = $order->prepareInvoice()
                 ->setTransactionId($order->getId())

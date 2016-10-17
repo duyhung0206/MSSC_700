@@ -34,7 +34,6 @@ class Magestore_Membership_Block_Order_Invoice_Totals extends Mage_Core_Block_Te
     {
         $totalsBlock = $this->getParentBlock();
         $invoice = $totalsBlock->getInvoice();
-        $order = $this->getParentBlock()->getOrder();
         $totalsBlock->addTotal(new Varien_Object(array(
             'code' => 'discount_amount',
             'label' => $this->helper('customercredit')->__('Discount exchange'),
