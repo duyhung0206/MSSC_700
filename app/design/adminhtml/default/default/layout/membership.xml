@@ -14,49 +14,99 @@
     </adminhtml_membership_group_index>
 
     <adminhtml_sales_order_view>
+        <reference name="order_items">
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>membership/sales/items/column/name.phtml</template></action>
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name_grouped</block><template>membership/sales/items/column/name.phtml</template><type>grouped</type></action>
+        </reference>
         <reference name="order_totals">
             <block type="membership/order_totals"/>
         </reference>
     </adminhtml_sales_order_view>
 
     <adminhtml_sales_order_invoice_new>
+        <reference name="order_items">
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>membership/sales/items/column/name.phtml</template></action>
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name_grouped</block><template>membership/sales/items/column/name.phtml</template><type>grouped</type></action>
+        </reference>
         <reference name="invoice_totals">
             <block type="membership/order_invoice_totals"/>
         </reference>
     </adminhtml_sales_order_invoice_new>
     <adminhtml_sales_order_invoice_updateqty>
+        <reference name="order_items">
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>membership/sales/items/column/name.phtml</template></action>
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name_grouped</block><template>membership/sales/items/column/name.phtml</template><type>grouped</type></action>
+        </reference>
         <reference name="invoice_totals">
             <block type="membership/order_invoice_totals"/>
         </reference>
     </adminhtml_sales_order_invoice_updateqty>
+    <adminhtml_sales_order_shipment_new>
+        <reference name="order_items">
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>membership/sales/items/column/name.phtml</template></action>
+        </reference>
+    </adminhtml_sales_order_shipment_new>
+    <adminhtml_sales_order_shipment_view>
+        <reference name="shipment_items">
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>membership/sales/items/column/name.phtml</template></action>
+        </reference>
+    </adminhtml_sales_order_shipment_view>
     <adminhtml_sales_order_invoice_view>
+        <reference name="invoice_items">
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>membership/sales/items/column/name.phtml</template></action>
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name_grouped</block><template>membership/sales/items/column/name.phtml</template><type>grouped</type></action>
+        </reference>
         <reference name="invoice_totals">
             <block type="membership/order_invoice_totals"/>
         </reference>
     </adminhtml_sales_order_invoice_view>
 
     <adminhtml_sales_order_invoice_print>
+        <!--<reference name="order_items">-->
+            <!--<action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>membership/sales/items/column/name.phtml</template></action>-->
+            <!--<action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name_grouped</block><template>membership/sales/items/column/name.phtml</template><type>grouped</type></action>-->
+        <!--</reference>-->
         <reference name="invoice_totals">
-            <block type="membership/order_invoice_totals"/>
+            <block type="membership/order_invoice_totals" />
         </reference>
     </adminhtml_sales_order_invoice_print>
 
     <adminhtml_sales_order_creditmemo_new>
+        <reference name="order_items">
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>membership/sales/items/column/name.phtml</template></action>
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name_grouped</block><template>membership/sales/items/column/name.phtml</template><type>grouped</type></action>
+        </reference>
         <reference name="creditmemo_totals">
             <block type="membership/order_creditmemo_totals"/>
         </reference>
     </adminhtml_sales_order_creditmemo_new>
     <adminhtml_sales_order_creditmemo_updateqty>
+        <reference name="order_items">
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>membership/sales/items/column/name.phtml</template></action>
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name_grouped</block><template>membership/sales/items/column/name.phtml</template><type>grouped</type></action>
+        </reference>
         <reference name="creditmemo_totals">
             <block type="membership/order_creditmemo_totals"/>
         </reference>
     </adminhtml_sales_order_creditmemo_updateqty>
     <adminhtml_sales_order_creditmemo_view>
+        <reference name="creditmemo_items">
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>membership/sales/items/column/name.phtml</template></action>
+            <action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name_grouped</block><template>membership/sales/items/column/name.phtml</template><type>grouped</type></action>
+        </reference>
         <reference name="creditmemo_totals">
             <block type="membership/order_creditmemo_totals"/>
         </reference>
     </adminhtml_sales_order_creditmemo_view>
-
+    <adminhtml_sales_order_creditmemo_print>
+        <!--<reference name="order_items">-->
+            <!--<action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name</block><template>membership/sales/items/column/name.phtml</template></action>-->
+            <!--<action method="addColumnRender"><column>name</column><block>adminhtml/sales_items_column_name_grouped</block><template>membership/sales/items/column/name.phtml</template><type>grouped</type></action>-->
+        <!--</reference>-->
+        <reference name="creditmemo_totals">
+            <block type="membership/order_creditmemo_totals"/>
+        </reference>
+    </adminhtml_sales_order_creditmemo_print>
 
     <adminhtml_membership_package_index>
         <reference name="content">
